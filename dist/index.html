@@ -1,10 +1,27 @@
 <!doctype html>
 <html>
   <head>
-    <title>Getting Started</title>
-  
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="./reset.css" type="text/css">
+    <link rel="stylesheet" href="./canvas.css" type="text/css">
+    <title>Bubble Party</title>
+    <style>
+    	* { padding: 0; margin: 0; }
+    	canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
   </head>
   <body>
+    <nav class='top-nav'></nav>
+    <button class='professional'>GitHub</button>
+    <button class='professional'>LinkedIn</button>
+    <button class='professional'>Personal Website</button>
+    <canvas id="myCanvas" ></canvas>
+    <nav class='bottom-nav'>
+      <button class='game-button'>Start</button>
+      <button class='game-button'>Quit</button>
+      <button class='game-button'>Mute</button>
+    </nav>
+
     <script src="main.js"></script>
   </body>
 </html>
