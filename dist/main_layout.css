@@ -1,0 +1,70 @@
+.main-container {
+  display: grid;
+  grid-gap: 10px;
+}
+html {
+  background-image: url(../images/background.png);
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.main-nav {
+  display: grid;
+  width: 90%;
+  margin: auto;
+  grid-template-columns: auto 1fr;
+}
+
+.title {
+  font-family: 'Freckle Face', cursive;
+  font-size: 70px;
+  color: rgb(255, 251, 175);
+  text-shadow: 2px 4px rgb(84 115 150);
+  letter-spacing: 3px;
+  text-align: left;
+}
+
+.top-nav {
+  display: grid;
+  grid-gap: 35px;
+  grid-template-columns: repeat(3, minmax(100px, auto));
+  justify-content: end;
+  margin-top: 20px;
+  align-content: center;
+}
+
+.professional {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  padding: 10px;
+  border: 3px solid rgb(201, 205, 228);
+  border-radius: 4px;
+  text-align: center;
+  background-color: rgb(201, 205, 228);
+  color: rgb(208, 47, 45);
+  box-shadow: 5px 5px 10px grey;
+}
+
+#myCanvas {
+  background-color: transparent;
+  border: 3px solid red;
+  width: 600px;
+  height: 600px;
+}
+
+.bottom-nav {
+  display: grid;
+  grid-gap: 35px;
+  grid-template-columns: repeat(3, minmax(100px, auto));
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.game-button {
+  font-family: 'Freckle Face', cursive;
+  font-size: 30px;
+  color: blue;
+}
+

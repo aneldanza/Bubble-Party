@@ -3,19 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="./reset.css" type="text/css">
-    <link rel="stylesheet" href="./canvas.css" type="text/css">
+    <link rel="stylesheet" href="./main_layout.css" type="text/css">
+    <link rel="icon" type="image/png" href="../images/background.png" />
+    <link href="https://fonts.googleapis.com/css?family=Freckle+Face|Montserrat" rel="stylesheet">
     <title>Bubble Party</title>
     <style>
     	* { padding: 0; margin: 0; }
     	canvas { background: #eee; display: block; margin: 0 auto; }
     </style>
   </head>
-  <body>
-    <nav class='top-nav'></nav>
-    <button class='professional'>GitHub</button>
-    <button class='professional'>LinkedIn</button>
-    <button class='professional'>Personal Website</button>
-    <canvas id="myCanvas" ></canvas>
+  <body class='main-container'>
+    <nav class='main-nav'>
+      <h1 class='title'>Bubble Party</h1>
+      <nav class='top-nav'>
+        <button class='professional'><a href="https://github.com/anel-guerrero/Bubble-Party" target="_blank">GitHub</a></button>
+        <button class='professional'><a href="https://www.linkedin.com/in/anel-guerrero-a9591868/" target="_blank">LinkedIn</a></button>
+        <button class='professional'><a href="http://#" target="_blank">Personal Website</a></button>
+      </nav>
+    </nav>
+    <div>
+      <canvas id="myCanvas" ></canvas>
+    </div>
     <nav class='bottom-nav'>
       <button class='game-button'>Start</button>
       <button class='game-button'>Quit</button>
