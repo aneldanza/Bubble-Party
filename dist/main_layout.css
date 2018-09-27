@@ -48,10 +48,8 @@ html {
 }
 
 #myCanvas {
-  background-color: transparent;
+  /* background-color: transparent; */
   border: 3px solid red;
-  width: 600px;
-  height: 600px;
 }
 
 .bottom-nav {
