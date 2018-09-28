@@ -8,7 +8,7 @@ class Game {
     this.bubbles = [];
     this.colors = colors;
     this.canvas = canvas;
-    this.columns = 15;
+    this.columns = 14;
     this.rows = 1;
     this.x = canvas.width/2;
     this.y = 550;
@@ -62,8 +62,10 @@ class Game {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let b = this.bubbles[c][r];
         
-        if (this.x > b.x - this.radius && this.x < b.x + this.radius && this.y > b.y && this.y <= b.y + 2 * this.radius) {
-          this.dy = -this.dy;
+        if (this.x > b.x - this.radius && this.x < b.x + this.radius 
+          && this.y > b.y && this.y <= b.y + 2 * this.radius + 3) {
+          this.dx = 0;
+          this.dy = 0;
         }
       }
     }
@@ -74,20 +76,27 @@ class Game {
     this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
     this.ctx.fillStyle = 'yellow';
     this.ctx.fill();
+    this.ctx.strokeStyle = 'blue';
+    this.ctx.stroke();
     this.ctx.closePath;
   }
   
   
   drawBubbles() {
+    let leftOffset = 5;
+    let bubblePadding = 3;
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.rows; r++) {
-        let bubbleX = this.radius * (2 * c + 1);
+        // let bubbleX = this.radius * (2 * c + 1) + leftOffset;
+        let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius;
         let bubbleY = this.radius * (r + 1);
         this.bubbles[c][r].x = bubbleX;
         this.bubbles[c][r].y = bubbleY;
         this.ctx.beginPath();
         this.ctx.arc(bubbleX, bubbleY, this.radius, 0, Math.PI*2);
         this.ctx.fillStyle = this.bubbles[c][r].color;
+        this.ctx.strokeStyle = 'blue';
+        this.ctx.stroke();
         this.ctx.fill();
         this.ctx.closePath();
       }
