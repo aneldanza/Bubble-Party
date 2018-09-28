@@ -28,6 +28,8 @@ class Game {
     this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 20);
     this.ctx.lineTo(relativeX * Math.cos(relativeY/relativeX), relativeY * Math.sin(relativeY/relativeX) );
     this.ctx.stroke();
+
+
   }
   
   handleMouseClick(e) {
@@ -45,7 +47,22 @@ class Game {
   
     this.dy = (550 - dy) / (-100);
 
+    this.addRow();
+  
   }
+
+ addRow() {
+   let row = [];
+   for (let c = 0; c < this.columns; c++ ) {
+      let color = this.colors[Math.floor(Math.random() * this.colors.length)];
+      row.push(new Bubble(0, 0, color));
+   }
+   
+   for (let c = 0; c < this.columns; c++) {
+     this.bubbles[c].unshift(row[c]);
+   }
+
+ }
 
   createBubbles() {
     for (let c = 0; c < this.columns; c++) {
@@ -86,8 +103,8 @@ class Game {
     let bubblePadding = 3;
     let leftOffset = 3;
     let topOffset = 3;
-    for (let c = 0; c < this.columns; c++) {
-      for (let r = 0; r < this.rows; r++) {
+    for (let c = 0; c < this.bubbles.length; c++) {
+      for (let r = 0; r < this.bubbles[c].length; r++) {
         // let bubbleX = this.radius * (2 * c + 1) + leftOffset;
         let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;
         if (r % 2 === 0) {
