@@ -18,27 +18,29 @@ class Game {
     this.canvas = canvas;
     this.columns = 13;
     this.rows = 1;
-    
     this.radius = 20;
+    this.moveCount = 0;
     this.createBubbles();
     this.newPlayer();
-    canvas.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
-    canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
+    document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
+    document.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
   }
 
 
   handleMouseMove(e) {
     let relativeX = e.x - this.canvas.offsetLeft;
     let relativeY = e.y - this.canvas.offsetTop;
-    
+
     this.ctx.beginPath();
     this.ctx.setLineDash([15, 10]);
     this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 20);
     this.ctx.lineTo(relativeX * Math.cos(relativeY/relativeX), relativeY * Math.sin(relativeY/relativeX) );
     this.ctx.stroke();
+  
   }
   
   handleMouseClick(e) {
+    this.moveCount++;
     let clickedX = e.x - this.canvas.offsetLeft;
     let clickedY = e.y - this.canvas.offsetTop;
     
@@ -53,21 +55,35 @@ class Game {
     
     this.dy = (550 - dy) / (-100);
     
-    this.addRow();
-   
+    if (this.moveCount === 4) {
+      this.addRow();
+      this.moveCount = 0;
+    }
   }
 
   searchForCluster(bubble) {
+    
     let cluster = [[bubble.c, bubble.r]];
     for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
       let c = CLUSTER_POSITIONS[i][0] + bubble.c;
+      if (c > 12 || c < 0) {
+        continue;
+      }
       let r = CLUSTER_POSITIONS[i][1] + bubble.r;
-     
-      if (this.bubbles[c][r].color === bubble.color) {
-       
-        cluster.push([c, r]);
+      debugger
+      if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color) {
+        cluster.push(this.bubbles[c][r]);
       }
     }
+   
+
+    if (cluster.length > 2) {
+      this.dropCluster(cluster);
+    }
+  }
+
+  dropCluster(cluster) {
+    
   }
 
   addRow() {
@@ -99,13 +115,15 @@ class Game {
         let b = this.bubbles[c][r];
         
         if (this.x > b.x - this.radius && this.x < b.x + this.radius 
-          && this.y > b.y && this.y <= b.y + 2 * this.radius + 2) {
+          && this.y > b.y && this.y <= b.y + 2 * this.radius + 0) {
           this.dx = 0;
           this.dy = 0;
-          this.bubbles[c].push(new Bubble(this.x, this.y, this.player.color, c, r + 1));
           debugger
+          let newBubble = new Bubble(this.x, this.y, this.player.color, c, r + 1);
+          this.bubbles[c].push(newBubble);
+          this.searchForCluster(newBubble);
           this.newPlayer();
-          debugger
+         
         }
       }
     }
