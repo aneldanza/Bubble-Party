@@ -8,8 +8,8 @@ class Game {
     this.bubbles = [];
     this.colors = colors;
     this.canvas = canvas;
-    this.columns = 14;
-    this.rows = 1;
+    this.columns = 13;
+    this.rows = 3;
     this.x = canvas.width/2;
     this.y = 550;
     this.radius = 20;
@@ -83,13 +83,17 @@ class Game {
   
   
   drawBubbles() {
-    let leftOffset = 5;
     let bubblePadding = 3;
+    let leftOffset = 3;
+    let topOffset = 3;
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.rows; r++) {
         // let bubbleX = this.radius * (2 * c + 1) + leftOffset;
-        let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius;
-        let bubbleY = this.radius * (r + 1);
+        let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;
+        if (r % 2 === 0) {
+          bubbleX += this.radius;
+        }
+        let bubbleY = (2 * this.radius + topOffset) * r + this.radius;
         this.bubbles[c][r].x = bubbleX;
         this.bubbles[c][r].y = bubbleY;
         this.ctx.beginPath();
