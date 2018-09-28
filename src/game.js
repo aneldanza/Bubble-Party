@@ -1,4 +1,12 @@
 const Bubble = require('./bubble');
+const CLUSTER_POSITIONS = [
+  [0, -1],
+  [0, 1],
+  [-1, 0], 
+  [1, 0], 
+  [-1, -1], 
+  [1, 1]
+];
 
 class Game {
   constructor(ctx, colors, canvas) {
@@ -9,11 +17,11 @@ class Game {
     this.colors = colors;
     this.canvas = canvas;
     this.columns = 13;
-    this.rows = 3;
-    this.x = canvas.width/2;
-    this.y = 550;
+    this.rows = 1;
+    
     this.radius = 20;
     this.createBubbles();
+    this.newPlayer();
     canvas.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
     canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
   }
@@ -28,41 +36,52 @@ class Game {
     this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 20);
     this.ctx.lineTo(relativeX * Math.cos(relativeY/relativeX), relativeY * Math.sin(relativeY/relativeX) );
     this.ctx.stroke();
-
-
   }
   
   handleMouseClick(e) {
     let clickedX = e.x - this.canvas.offsetLeft;
     let clickedY = e.y - this.canvas.offsetTop;
-  
+    
     let dx = Math.floor(clickedX * Math.cos(clickedY/clickedX));
     let dy = Math.floor(clickedY * Math.sin(clickedY/clickedX));
-  
+    
     if (clickedX < 300) {
       this.dx = (300 - dx) /(-100);
     } else {
       this.dx = (dx - 300) / 100;
     }
-  
+    
     this.dy = (550 - dy) / (-100);
-
+    
     this.addRow();
-  
+   
   }
 
- addRow() {
-   let row = [];
-   for (let c = 0; c < this.columns; c++ ) {
-      let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-      row.push(new Bubble(0, 0, color));
-   }
-   
-   for (let c = 0; c < this.columns; c++) {
-     this.bubbles[c].unshift(row[c]);
-   }
+  searchForCluster(bubble) {
+    let cluster = [[bubble.c, bubble.r]];
+    for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
+      let c = CLUSTER_POSITIONS[i][0] + bubble.c;
+      let r = CLUSTER_POSITIONS[i][1] + bubble.r;
+     
+      if (this.bubbles[c][r].color === bubble.color) {
+       
+        cluster.push([c, r]);
+      }
+    }
+  }
 
- }
+  addRow() {
+    let row = [];
+    for (let c = 0; c < this.columns; c++ ) {
+        let color = this.colors[Math.floor(Math.random() * this.colors.length)];
+        row.push(new Bubble(0, 0, color, 0, 0));
+    }
+    
+    for (let c = 0; c < this.columns; c++) {
+      this.bubbles[c].unshift(row[c]);
+    }
+
+  }
 
   createBubbles() {
     for (let c = 0; c < this.columns; c++) {
@@ -80,18 +99,34 @@ class Game {
         let b = this.bubbles[c][r];
         
         if (this.x > b.x - this.radius && this.x < b.x + this.radius 
-          && this.y > b.y && this.y <= b.y + 2 * this.radius + 3) {
+          && this.y > b.y && this.y <= b.y + 2 * this.radius + 2) {
           this.dx = 0;
           this.dy = 0;
+          this.bubbles[c].push(new Bubble(this.x, this.y, this.player.color, c, r + 1));
+          debugger
+          this.newPlayer();
+          debugger
         }
       }
     }
   }
+
+  attachBubble() {
+
+  }
   
+  newPlayer() {
+    this.x = this.canvas.width/2;
+    this.y = 550;
+    let color = this.colors[Math.floor(Math.random() * this.colors.length)];
+    this.player = new Bubble(this.x, this.y, color);
+    
+  }
+
   drawPlayer() {
     this.ctx.beginPath();
     this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
-    this.ctx.fillStyle = 'yellow';
+    this.ctx.fillStyle = this.player.color;
     this.ctx.fill();
     this.ctx.strokeStyle = 'blue';
     this.ctx.stroke();
@@ -105,7 +140,6 @@ class Game {
     let topOffset = 3;
     for (let c = 0; c < this.bubbles.length; c++) {
       for (let r = 0; r < this.bubbles[c].length; r++) {
-        // let bubbleX = this.radius * (2 * c + 1) + leftOffset;
         let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;
         if (r % 2 === 0) {
           bubbleX += this.radius;
@@ -113,6 +147,8 @@ class Game {
         let bubbleY = (2 * this.radius + topOffset) * r + this.radius;
         this.bubbles[c][r].x = bubbleX;
         this.bubbles[c][r].y = bubbleY;
+        this.bubbles[c][r].c = c;
+        this.bubbles[c][r].r = r;
         this.ctx.beginPath();
         this.ctx.arc(bubbleX, bubbleY, this.radius, 0, Math.PI*2);
         this.ctx.fillStyle = this.bubbles[c][r].color;
@@ -129,7 +165,7 @@ class Game {
     this.drawPlayer();
     this.drawBubbles();
     this.detectCollision();
-
+    
     if (this.x < this.radius || this.x > this.canvas.width - this.radius) {
       this.dx = -this.dx;
     }
