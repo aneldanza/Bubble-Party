@@ -33,10 +33,12 @@ class Game {
 
     this.ctx.beginPath();
     this.ctx.setLineDash([15, 10]);
-    this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 20);
-    this.ctx.lineTo(relativeX * Math.cos(relativeY/relativeX), relativeY * Math.sin(relativeY/relativeX) );
+    this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 40);
+    let targetX = relativeX * Math.cos(relativeY/relativeX);
+    let targetY = relativeY * Math.sin(relativeY/relativeX);
+
+    this.ctx.lineTo(targetX, targetY);
     this.ctx.stroke();
-  
   }
   
   handleMouseClick(e) {
