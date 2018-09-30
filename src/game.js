@@ -16,11 +16,12 @@ class Game {
     this.bubbles = [];
     this.colors = colors;
     this.canvas = canvas;
-    this.columns = 13;
+    this.columns = 14;
     this.rows = 1;
     this.radius = 20;
     this.moveCount = 0;
     this.createBubbles();
+    this.fullRowCount = 1;
     this.newPlayer();
     document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
     document.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
@@ -72,12 +73,10 @@ class Game {
         continue;
       }
       let r = CLUSTER_POSITIONS[i][1] + bubble.r;
-      debugger
       if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color) {
         cluster.push(this.bubbles[c][r]);
       }
     }
-   
 
     if (cluster.length > 2) {
       this.dropCluster(cluster);
@@ -89,26 +88,28 @@ class Game {
   }
 
   addRow() {
-    let row = [];
-    for (let c = 0; c < this.columns; c++ ) {
-        let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-        row.push(new Bubble(0, 0, color, 0, 0));
-    }
-    
-    for (let c = 0; c < this.columns; c++) {
-      this.bubbles[c].unshift(row[c]);
+    for (let c = this.columns - 1; c >= 0; c--) {
+      for (let r = this.bubbles[c].length - 1; r >= 1;  r--) {
+       this.bubbles[c][r] = this.bubbles[c][r - 1];
+      }
     }
 
+    for (let c = 0; c < this.columns; c++) {
+      let color = this.colors[Math.floor(Math.random() * this.colors.length)];
+      this.bubbles[c][0] = new Bubble(0, 0, color, 0, 0, 'visible');
+    }
+
+    this.fullRowCount++;
   }
 
   createBubbles() {
     for (let c = 0; c < this.columns; c++) {
-      this.bubbles[c] = []
-      for (let r = 0; r < this.rows; r++) {
-        let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-        this.bubbles[c][r] = new Bubble(0, 0, color);
+      this.bubbles[c] = [];
+      for (let r = 0; r < 12; r++) {
+        this.bubbles[c][r] = new Bubble(0,0,'transparent', 0,0, 'placeholder');
       }
     }
+    this.addRow();
   }
 
   detectCollision() {
@@ -116,24 +117,53 @@ class Game {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let b = this.bubbles[c][r];
         
-        if (this.x > b.x - this.radius && this.x < b.x + this.radius 
-          && this.y > b.y && this.y <= b.y + 2 * this.radius + 0) {
+        if (b.status === 'visible'
+          && this.x > b.x - this.radius
+          && this.x < b.x + this.radius 
+          && this.y > b.y 
+          && this.y <= b.y + 2 * this.radius) 
+          {
           this.dx = 0;
           this.dy = 0;
-          debugger
-          let newBubble = new Bubble(this.x, this.y, this.player.color, c, r + 1);
-          this.bubbles[c].push(newBubble);
+          let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
+       
+          if (this.x < this.bubbles[c][r].x) {
+            if (this.bubbles[0][r].x === 23) {
+              if (this.bubbles[c - 1][r + 1].isAvailable()) {
+                this.bubbles[c - 1][r + 1] = newBubble;
+              } else {
+                this.bubbles[c - 1][r] = newBubble;
+              } 
+            } else {
+              if (this.bubbles[c][r + 1].isAvailable()) {
+                this.bubbles[c][r + 1] = newBubble;
+              } else {
+                this.bubbles[c - 1][r] = newBubble;
+              }
+            }
+          } else {
+            if (this.bubbles[0][r].x === 23) {
+              if (this.bubbles[c][r + 1].isAvailable()) {
+                this.bubbles[c][r + 1] = newBubble;
+              } else {
+                this.bubbles[c + 1][r] = newBubble;
+              } 
+            } else {
+              if (this.bubbles[c + 1][r + 1].isAvailable()) {
+                this.bubbles[c + 1][r + 1] = newBubble;
+              } else {
+                this.bubbles[c + 1][r] = newBubble;
+              }
+            }
+          }
+         
           this.searchForCluster(newBubble);
           this.newPlayer();
-         
         }
       }
     }
   }
 
-  attachBubble() {
-
-  }
   
   newPlayer() {
     this.x = this.canvas.width/2;
@@ -155,14 +185,20 @@ class Game {
   
   
   drawBubbles() {
-    let bubblePadding = 3;
+    let bubblePadding = 1;
     let leftOffset = 3;
     let topOffset = 3;
     for (let c = 0; c < this.bubbles.length; c++) {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;
-        if (r % 2 === 0) {
-          bubbleX += this.radius;
+        if (this.fullRowCount % 2 === 0) {
+          if (r % 2 === 0) {
+            bubbleX += this.radius;
+          }
+        } else {
+          if (r % 2 !== 0) {
+            bubbleX += this.radius;
+          }
         }
         let bubbleY = (2 * this.radius + topOffset) * r + this.radius;
         this.bubbles[c][r].x = bubbleX;

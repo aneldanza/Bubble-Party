@@ -9,5 +9,5 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let game = new Game(ctx, colors, canvas);
   window.game = game;
-  setInterval(() => game.draw(), 10);
+  setInterval(() => game.draw(), 6);
 });
