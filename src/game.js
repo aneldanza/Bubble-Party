@@ -5,8 +5,18 @@ const CLUSTER_POSITIONS = [
   [-1, 0], 
   [1, 0], 
   [-1, -1], 
+  [-1, 1]
+];
+
+const OFFSET_CLUSTER_POSITIONS = [
+  [0, -1],
+  [0, 1],
+  [-1, 0], 
+  [1, 0], 
+  [1, -1], 
   [1, 1]
 ];
+
 
 class Game {
   constructor(ctx, colors, canvas) {
@@ -22,6 +32,7 @@ class Game {
     this.moveCount = 0;
     this.createBubbles();
     this.fullRowCount = 1;
+    this.cluster = [];
     this.newPlayer();
     document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
     document.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
@@ -65,26 +76,59 @@ class Game {
   }
 
   searchForCluster(bubble) {
-    
-    let cluster = [[bubble.c, bubble.r]];
-    for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
-      let c = CLUSTER_POSITIONS[i][0] + bubble.c;
-      if (c > 12 || c < 0) {
-        continue;
+    debugger
+     this.cluster.push(bubble);
+    // for (let i = 0; i < this._POSITIONS.length; i++) {
+    //   let c = this._POSITIONS[i][0] + bubble.c;
+    //   if (c > 13 || c < 0) {
+    //     continue;
+    //   }
+    //   let r = this._POSITIONS[i][1] + bubble.r;
+    //   if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color) {
+    //     debugger
+    //     cluster.push(this.bubbles[c][r]);
+    //   }
+    // }
+    if (this.bubbles[0][bubble.r].x === 23) {
+      for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
+        let c = CLUSTER_POSITIONS[i][0] + bubble.c;
+        if (c > 13 || c < 0) {
+              continue;
+            }
+        let r = CLUSTER_POSITIONS[i][1] + bubble.r;
+        debugger
+        if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
+          // cluster.push(this.bubbles[c][r]);
+          this.searchForCluster(this.bubbles[c][r]);
+          debugger
+        }
       }
-      let r = CLUSTER_POSITIONS[i][1] + bubble.r;
-      if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color) {
-        cluster.push(this.bubbles[c][r]);
+    } else {
+      for (let i = 0; i < OFFSET_CLUSTER_POSITIONS.length; i++) {
+        let c = OFFSET_CLUSTER_POSITIONS[i][0] + bubble.c;
+        if (c > 13 || c < 0) {
+          continue;
+        }
+        let r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
+        debugger
+        if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
+          // cluster.push(this.bubbles[c][r]);
+          this.searchForCluster(this.bubbles[c][r]);
+          debugger
+        }
       }
     }
+    debugger
+    return this.cluster;
 
-    if (cluster.length > 2) {
-      this.dropCluster(cluster);
-    }
   }
-
-  dropCluster(cluster) {
-    
+  
+  dropCluster() {
+    if (this.cluster.length > 2) {
+      console.log(this.cluster);
+      this.cluster = [];
+    }
+    debugger
   }
 
   addRow() {
@@ -131,33 +175,55 @@ class Game {
             if (this.bubbles[0][r].x === 23) {
               if (this.bubbles[c - 1][r + 1].isAvailable()) {
                 this.bubbles[c - 1][r + 1] = newBubble;
+                this.newBubbleC = c - 1;
+                this.newBubbleR = r + 1;
               } else {
                 this.bubbles[c - 1][r] = newBubble;
+                this.newBubbleC = c - 1;
+                this.newBubbleR = r;
               } 
             } else {
               if (this.bubbles[c][r + 1].isAvailable()) {
                 this.bubbles[c][r + 1] = newBubble;
+                this.newBubbleC = c;
+                this.newBubbleR = r + 1;
               } else {
                 this.bubbles[c - 1][r] = newBubble;
+                this.newBubbleC = c - 1;
+                this.newBubbleR = r;
               }
             }
           } else {
             if (this.bubbles[0][r].x === 23) {
               if (this.bubbles[c][r + 1].isAvailable()) {
                 this.bubbles[c][r + 1] = newBubble;
+                this.newBubbleC = c;
+                this.newBubbleR = r + 1;
               } else {
                 this.bubbles[c + 1][r] = newBubble;
+                this.newBubbleC = c + 1;
+                this.newBubbleR = r;
               } 
             } else {
               if (this.bubbles[c + 1][r + 1].isAvailable()) {
                 this.bubbles[c + 1][r + 1] = newBubble;
+                this.newBubbleC = c + 1;
+                this.newBubbleR = r + 1;
               } else {
                 this.bubbles[c + 1][r] = newBubble;
+                this.newBubbleC = c + 1;
+                this.newBubbleR = r;
               }
             }
           }
-         
-          this.searchForCluster(newBubble);
+          newBubble.c = this.newBubbleC;
+          newBubble.r = this.newBubbleR;
+          debugger
+          if (this.searchForCluster(newBubble).length > 2) {
+            debugger
+            this.dropCluster();
+          }
+      
           this.newPlayer();
         }
       }
@@ -208,8 +274,8 @@ class Game {
         this.ctx.beginPath();
         this.ctx.arc(bubbleX, bubbleY, this.radius, 0, Math.PI*2);
         this.ctx.fillStyle = this.bubbles[c][r].color;
-        this.ctx.strokeStyle = 'blue';
-        this.ctx.stroke();
+        // this.ctx.strokeStyle = 'blue';
+        // this.ctx.stroke();
         this.ctx.fill();
         this.ctx.closePath();
       }
