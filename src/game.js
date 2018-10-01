@@ -76,31 +76,18 @@ class Game {
   }
 
   searchForCluster(bubble) {
-    debugger
      this.cluster.push(bubble);
-    // for (let i = 0; i < this._POSITIONS.length; i++) {
-    //   let c = this._POSITIONS[i][0] + bubble.c;
-    //   if (c > 13 || c < 0) {
-    //     continue;
-    //   }
-    //   let r = this._POSITIONS[i][1] + bubble.r;
-    //   if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color) {
-    //     debugger
-    //     cluster.push(this.bubbles[c][r]);
-    //   }
-    // }
+
     if (this.bubbles[0][bubble.r].x === 23) {
       for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
         let c = CLUSTER_POSITIONS[i][0] + bubble.c;
         if (c > 13 || c < 0) {
               continue;
             }
+
         let r = CLUSTER_POSITIONS[i][1] + bubble.r;
-        debugger
         if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
-          // cluster.push(this.bubbles[c][r]);
           this.searchForCluster(this.bubbles[c][r]);
-          debugger
         }
       }
     } else {
@@ -109,26 +96,22 @@ class Game {
         if (c > 13 || c < 0) {
           continue;
         }
+
         let r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
-        debugger
         if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
-          // cluster.push(this.bubbles[c][r]);
           this.searchForCluster(this.bubbles[c][r]);
-          debugger
         }
       }
     }
-    debugger
     return this.cluster;
 
   }
   
   dropCluster() {
-    if (this.cluster.length > 2) {
-      console.log(this.cluster);
-      this.cluster = [];
-    }
-    debugger
+      for (let bubble = 0; bubble < this.cluster.length; bubble++) {
+        this.cluster[bubble].status = 'placeholder';
+        this.cluster[bubble].color = 'transparent';
+      }
   }
 
   addRow() {
@@ -223,7 +206,7 @@ class Game {
             debugger
             this.dropCluster();
           }
-      
+          this.cluster = [];
           this.newPlayer();
         }
       }
