@@ -77,41 +77,38 @@ class Game {
 
   searchForCluster(bubble) {
      this.cluster.push(bubble);
-
-    if (this.bubbles[0][bubble.r].x === 23) {
-      for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
-        let c = CLUSTER_POSITIONS[i][0] + bubble.c;
-        if (c > 13 || c < 0) {
-              continue;
-            }
-
-        let r = CLUSTER_POSITIONS[i][1] + bubble.r;
-        if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
-          this.searchForCluster(this.bubbles[c][r]);
-        }
-      }
-    } else {
-      for (let i = 0; i < OFFSET_CLUSTER_POSITIONS.length; i++) {
-        let c = OFFSET_CLUSTER_POSITIONS[i][0] + bubble.c;
-        if (c > 13 || c < 0) {
+      debugger
+     for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
+       let c, r;
+       if (this.bubbles[0][bubble.r].x === 23) {
+        c = CLUSTER_POSITIONS[i][0] + bubble.c;
+        r = CLUSTER_POSITIONS[i][1] + bubble.r;
+       } else {
+        c = OFFSET_CLUSTER_POSITIONS[i][0] + bubble.c;
+        r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
+       }
+       if (c > 13 || c < 0) {
           continue;
         }
-
-        let r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
+        
         if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
           this.searchForCluster(this.bubbles[c][r]);
         }
-      }
-    }
+     }
+    debugger
     return this.cluster;
 
   }
   
   dropCluster() {
-      for (let bubble = 0; bubble < this.cluster.length; bubble++) {
-        this.cluster[bubble].status = 'placeholder';
-        this.cluster[bubble].color = 'transparent';
-      }
+    for (let bubble = 0; bubble < this.cluster.length; bubble++) {
+      this.cluster[bubble].status = 'placeholder';
+      this.cluster[bubble].color = 'transparent';
+    }
+  }
+
+  detectFloatingBubbles() {
+    console.log('floating bubbles');
   }
 
   addRow() {
@@ -205,6 +202,7 @@ class Game {
           if (this.searchForCluster(newBubble).length > 2) {
             debugger
             this.dropCluster();
+            this.detectFloatingBubbles();
           }
           this.cluster = [];
           this.newPlayer();
