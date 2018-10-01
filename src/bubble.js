@@ -23,6 +23,7 @@ class Bubble {
     }
     return false;
   }
+
 }
 
 module.exports = Bubble;
