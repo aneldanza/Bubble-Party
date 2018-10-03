@@ -47,6 +47,32 @@ html {
   box-shadow: 5px 5px 10px grey;
 }
 
+#parent-container {
+  width: 600px;
+  height: 600px;
+  position: relative;
+  margin: auto;
+}
+
+.game-over {
+  background-color: blue;
+  border: 3px solid black;
+  width: 600px;
+  height: 600px;
+  margin: auto;
+  position: fixed;
+  z-index: 2;
+}
+
+#game {
+  display: none;
+  width: 600px;
+  height: 600px;
+  margin: auto;
+  position: fixed;
+  z-index: 2;
+}
+
 #myCanvas {
   /* background-color: transparent; */
   border: 3px solid red;

@@ -1,4 +1,7 @@
 const Bubble = require('./bubble');
+const GameView = require('./game_view');
+// import { interval } from './index';
+
 const CLUSTER_POSITIONS = [
   [0, -1],
   [0, 1],
@@ -19,60 +22,21 @@ const OFFSET_CLUSTER_POSITIONS = [
 
 
 class Game {
-  constructor(ctx, colors, canvas) {
-    this.ctx = ctx;
+  constructor(colors, canvas) {
     this.dx = 0;
     this.dy = 0;
     this.bubbles = [];
     this.colors = colors;
     this.canvas = canvas;
+    this.floating = true;
     this.columns = 14;
     this.rows = 13;
-    this.radius = 20;
     this.moveCount = 0;
     this.createBubbles();
     this.fullRowCount = 1;
     this.cluster = [];
     this.newPlayer();
-    document.addEventListener('mousemove', this.handleMouseMove.bind(this), false);
-    document.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
-  }
-
-
-  handleMouseMove(e) {
-    let relativeX = e.x - this.canvas.offsetLeft;
-    let relativeY = e.y - this.canvas.offsetTop;
-
-    this.ctx.beginPath();
-    this.ctx.setLineDash([15, 10]);
-    this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 40);
-    let targetX = relativeX * Math.cos(relativeY/relativeX);
-    let targetY = relativeY * Math.sin(relativeY/relativeX);
-
-    this.ctx.lineTo(targetX, targetY);
-    this.ctx.stroke();
-  }
-  
-  handleMouseClick(e) {
-    this.moveCount++;
-    let clickedX = e.x - this.canvas.offsetLeft;
-    let clickedY = e.y - this.canvas.offsetTop;
-    
-    let dx = Math.floor(clickedX * Math.cos(clickedY/clickedX));
-    let dy = Math.floor(clickedY * Math.sin(clickedY/clickedX));
-    
-    if (clickedX < 300) {
-      this.dx = (300 - dx) /(-100);
-    } else {
-      this.dx = (dx - 300) / 100;
-    }
-    
-    this.dy = (550 - dy) / (-100);
-    
-    if (this.moveCount === 4) {
-      this.addRow();
-      this.moveCount = 0;
-    }
+    this.over = false;
   }
 
   searchForCluster(bubble) {
@@ -87,57 +51,73 @@ class Game {
         c = OFFSET_CLUSTER_POSITIONS[i][0] + bubble.c;
         r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
        }
-       if (c > 13 || c < 0) {
+       
+       if (c > this.columns || c < 0 || r > this.rows || r < 0) {
           continue;
-        }
-        
-        if (this.bubbles[c][r] && this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
+        } else if (this.bubbles[c] &&
+          this.bubbles[c][r] &&
+          this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
+         
           this.searchForCluster(this.bubbles[c][r]);
         }
      }
- 
+   
     return this.cluster;
-
   }
   
   dropCluster() {
+    
     for (let bubble = 0; bubble < this.cluster.length; bubble++) {
+      
       this.cluster[bubble].status = 'placeholder';
       this.cluster[bubble].color = 'transparent';
     }
     this.cluster = [];
   }
 
-  isDisattached(bubble) {
-    if (bubble.status === 'placeholder') {
-      return false;
-    } if (this.bubbles[bubble.c][bubble.r - 1] && this.bubbles[bubble.c][bubble.r - 1].status === 'placeholder') {
-      if (this.bubbles[0][bubble.r].x === 23) {
-        if (this.bubbles[bubble.c - 1] &&
-          this.bubbles[bubble.c - 1][bubble.r - 1] && 
-          this.bubbles[bubble.c - 1][bubble.r - 1].status === 'placeholder') {
+  isDisattached({c, r}) {
+
+    if (this.bubbles[c][r - 1].status === 'placeholder') {
+      if (this.bubbles[0][r].x === 23) {
+       
+        if (c > 0 &&
+          this.bubbles[c - 1][r - 1].status === 'placeholder') {
+          return true;
+        } else if (c === 0) {
           return true;
         }
       } else {
-        if (this.bubbles[bubble.c + 1] &&
-          this.bubbles[bubble.c + 1][bubble.r - 1] && 
-          this.bubbles[bubble.c + 1][bubble.r - 1].status === 'placeholder') {
+       
+        // if (c === 0 &&
+        //   this.bubbles[c + 1][r - 1].status === 'placeholder'){
+        //   return true;
+        // } else 
+        if (c < this.columns - 1 &&
+          this.bubbles[c + 1][r - 1].status === 'placeholder') {
           return true;
-        }
+        } else if(c === this.columns - 1 &&
+          this.bubbles[c - 1][r].status === 'placeholder') {
+          return true;
+        } 
       }
     }
     return false;
   }
 
   detectFloatingBubbles() {
-    console.log('floating bubbles');
+    
+    
+    this.floating = false;
     for (let c = 0; c < this.columns; c++) {
-      for (let r = 0; r < this.rows; r++ ){ 
-        if (this.isDisattached.call(this, this.bubbles[c][r]) && this.bubbles[c - 1][r].status === 'placeholder') {
+      for (let r = 1; r < this.rows; r++ ){ 
+      
+        if ((this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) && c === 0) ||(this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) 
+        && this.bubbles[c - 1][r].status === 'placeholder'))
+        {      
           this.cluster.push(this.bubbles[c][r]);
           for (let i = c + 1; i < this.columns; i++) {
-            debugger
-            if (this.isDisattached.call(this, this.bubbles[i][r])) {
+
+            if (this.bubbles[i][r].status === 'visible' && this.isDisattached.call(this, this.bubbles[i][r])) {
               this.cluster.push(this.bubbles[i][r])
             } else if (this.bubbles[i][r] === 'undefined' || this.bubbles[i][r].status === 'placeholder') {
               break;
@@ -145,33 +125,36 @@ class Game {
               this.cluster = [];
               break;
             }  
-          }
-          debugger
+          } 
+          
+          
           if (this.cluster.length > 0) {
             let start_column = this.cluster[0].c
-            let start_row = this.cluster[0].r;
-            for (let k = start_column; k < this.cluster.length; k++) {
-              for (let j =  start_row; j < start_column.length; j++) {
-                debugger
+            let start_row = this.cluster[0].r + 1;
+            
+            for (let k = start_column; k <= this.cluster[this.cluster.length - 1].c; k++) {
+              for (let j =  start_row; j < this.rows; j++) {
                 if (this.bubbles[k][j].status === 'visible') {
                   this.cluster.push(this.bubbles[k][j]);
+                  this.cluster
+                  
                 }
               }
             }
-            debugger
-            this.dropCluster();
+          
+          
+          this.dropCluster();
+          this.floating = true;
+          
           } 
-        } else {
-          debugger
-          this.floating = false;
-        }
+        } 
       }
     }
   }
 
   addRow() {
-    for (let c = this.columns - 1; c >= 0; c--) {
-      for (let r = this.bubbles[c].length - 1; r >= 1;  r--) {
+    for (let c = 0; c < this.columns; c++) {
+      for (let r = this.rows - 1; r >= 1;  r--) {
        this.bubbles[c][r] = this.bubbles[c][r - 1];
       }
     }
@@ -182,15 +165,21 @@ class Game {
     }
 
     this.fullRowCount++;
-    if (this.fullRowCount > this.rows) {
-      this.gameOver();
-    }
   }
 
   gameOver() {
-    alert('GAME OVER. YOU HAVE LOST');
-    document.location.reload();
+    var d = document.getElementBy("game-over");
+    d.display = "inline-block";
+    document.location.reload(); 
   }
+
+  // checkforGameOver() {
+  //   for (let c = 0; c < this.columns; c++) {
+  //     if (this.bubbles[c][this.rows - 1].status === 'visible') {
+  //       this.gameOver();
+  //     }
+  //   }
+  // }
 
   createBubbles() {
     for (let c = 0; c < this.columns; c++) {
@@ -203,159 +192,97 @@ class Game {
   }
 
   detectCollision() {
-  
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let b = this.bubbles[c][r];
         
         if (b.status === 'visible'
-          && this.x > b.x - this.radius
-          && this.x < b.x + this.radius 
+          && this.x > b.x - b.radius - 1
+          && this.x < b.x + b.radius 
           && this.y > b.y 
-          && this.y <= b.y + 2 * this.radius) 
+          && this.y <= b.y + 2 * b.radius + 1) 
           {
           this.dx = 0;
           this.dy = 0;
           let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
-       
-          if (this.x < this.bubbles[c][r].x) {
-            if (this.bubbles[0][r].x === 23) {
-              if (this.bubbles[c - 1] && this.bubbles[c - 1][r + 1].isAvailable()) {
-                this.bubbles[c - 1][r + 1] = newBubble;
-                this.newBubbleC = c - 1;
-                this.newBubbleR = r + 1;
+
+          if (b.y >= 535) {
+            // clearInterval(interval);
+            // alert('Game Over');
+            this.over = true; 
+          }
+
+            if (this.x < this.bubbles[c][r].x) {
+              // 
+              if (this.bubbles[0][r].x === 23 && this.bubbles[c - 1] && r < this.rows) {
+                if (r + 1 < this.rows && this.bubbles[c - 1][r + 1].isAvailable()) {
+                  newBubble.c = c - 1;
+                  newBubble.r = r + 1;
+                  this.bubbles[c - 1][r + 1] = newBubble;
+              
+                } else {
+                  newBubble.c = c - 1;
+                  newBubble.r = r;
+                  this.bubbles[c - 1][r] = newBubble;
+                } 
               } else {
-                this.bubbles[c - 1][r] = newBubble;
-                this.newBubbleC = c - 1;
-                this.newBubbleR = r;
-              } 
+                if (this.bubbles[c] && this.bubbles[c][r + 1].isAvailable()) {
+                  newBubble.c = c;
+                  newBubble.r = r + 1;
+                  this.bubbles[c][r + 1] = newBubble;
+                } else if (this.bubbles[c - 1]) {
+                  newBubble.c = c - 1;
+                  newBubble.r = r;
+                  this.bubbles[c - 1][r] = newBubble;
+                }
+              }
             } else {
-              if (this.bubbles[c][r + 1].isAvailable()) {
-                this.bubbles[c][r + 1] = newBubble;
-                this.newBubbleC = c;
-                this.newBubbleR = r + 1;
+              // 
+              if (this.bubbles[0][r].x === 23) {
+                if (this.bubbles[c][r + 1] && this.bubbles[c][r + 1].isAvailable()) {
+                  newBubble.c = c;
+                  newBubble.r = r + 1;
+                  this.bubbles[c][r + 1] = newBubble;
+                } else if (this.bubbles[c + 1]){
+                  newBubble.c = c + 1;
+                  newBubble.r = r;
+                  this.bubbles[c + 1][r] = newBubble;
+                } 
               } else {
-                this.bubbles[c - 1][r] = newBubble;
-                this.newBubbleC = c - 1;
-                this.newBubbleR = r;
+                if (this.bubbles[c + 1][r + 1] && this.bubbles[c + 1][r + 1].isAvailable()) {
+                  newBubble.c = c + 1;
+                  newBubble.r = r + 1;
+                  this.bubbles[c + 1][r + 1] = newBubble;
+                } else {
+                  newBubble.c = c + 1;
+                  newBubble.r = r;
+                  this.bubbles[c + 1][r] = newBubble;
+                }
               }
             }
-          } else {
-            if (this.bubbles[0][r].x === 23) {
-              if (this.bubbles[c][r + 1] && this.bubbles[c][r + 1].isAvailable()) {
-                this.bubbles[c][r + 1] = newBubble;
-                this.newBubbleC = c;
-                this.newBubbleR = r + 1;
-              } else {
-                this.bubbles[c + 1][r] = newBubble;
-                this.newBubbleC = c + 1;
-                this.newBubbleR = r;
-              } 
-            } else {
-              if (this.bubbles[c + 1][r + 1].isAvailable()) {
-                this.bubbles[c + 1][r + 1] = newBubble;
-                this.newBubbleC = c + 1;
-                this.newBubbleR = r + 1;
-              } else {
-                this.bubbles[c + 1][r] = newBubble;
-                this.newBubbleC = c + 1;
-                this.newBubbleR = r;
+
+          let cluster = this.searchForCluster.call(this, newBubble);  
+            if (cluster.length > 2) {  
+              this.dropCluster();
+              this.floating = true;
+    
+              while (this.floating) {
+                this.detectFloatingBubbles();
               }
             }
-          }
-          newBubble.c = this.newBubbleC;
-          newBubble.r = this.newBubbleR;
-         
-          if (this.searchForCluster(newBubble).length > 2) {
-           
-            this.dropCluster();
-            this.floating = true;
-            while (this.floating) {
-              this.detectFloatingBubbles();
-            }
-          }
-          this.cluster = [];
-          this.newPlayer();
+            this.cluster = [];
+            this.newPlayer();
         }
       }
     }
   }
 
-  
   newPlayer() {
     this.x = this.canvas.width/2;
-    this.y = 550;
+    this.y = 570;
     let color = this.colors[Math.floor(Math.random() * this.colors.length)];
     this.player = new Bubble(this.x, this.y, color);
-    
-  }
-
-  drawPlayer() {
-    this.ctx.beginPath();
-    this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
-    this.ctx.fillStyle = this.player.color;
-    this.ctx.fill();
-    this.ctx.strokeStyle = 'blue';
-    this.ctx.stroke();
-    this.ctx.closePath;
-  }
-  
-  
-  drawBubbles() {
-    let bubblePadding = 1;
-    let leftOffset = 3;
-    let topOffset = 3;
-    for (let c = 0; c < this.bubbles.length; c++) {
-      for (let r = 0; r < this.bubbles[c].length; r++) {
-        let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;
-        if (this.fullRowCount % 2 === 0) {
-          if (r % 2 === 0) {
-            bubbleX += this.radius;
-          }
-        } else {
-          if (r % 2 !== 0) {
-            bubbleX += this.radius;
-          }
-        }
-        let bubbleY = (2 * this.radius + topOffset) * r + this.radius;
-        this.bubbles[c][r].x = bubbleX;
-        this.bubbles[c][r].y = bubbleY;
-        this.bubbles[c][r].c = c;
-        this.bubbles[c][r].r = r;
-        this.ctx.beginPath();
-        this.ctx.arc(bubbleX, bubbleY, this.radius, 0, Math.PI*2);
-        this.ctx.fillStyle = this.bubbles[c][r].color;
-        // this.ctx.strokeStyle = 'blue';
-        // this.ctx.stroke();
-        this.ctx.fill();
-        this.ctx.closePath();
-      }
-    }
-  }
-  
-  draw() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.drawPlayer();
-    this.drawBubbles();
-    this.detectCollision();
-    
-    if (this.x < this.radius || this.x > this.canvas.width - this.radius) {
-      this.dx = -this.dx;
-    }
-  
-    if (this.y < this.radius || this.y > this.canvas.height - this.radius) {
-      this.dy = -this.dy;
-    }
-
-    this.x += this.dx;
-    this.y += this.dy;
-    
-  
-    // requestAnimationFrame(draw);
-  }
-  
-  // draw();
-  
+  } 
 }
 
 module.exports = Game;
