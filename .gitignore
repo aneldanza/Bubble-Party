@@ -27,8 +27,6 @@
 /config/master.key
 
 node_modules/
-main.js
-main.js.map
 .byebug_history
 .DS_Store
 npm-debug.log
