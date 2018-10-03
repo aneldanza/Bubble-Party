@@ -1,6 +1,4 @@
 const Bubble = require('./bubble');
-const GameView = require('./game_view');
-// import { interval } from './index';
 
 const CLUSTER_POSITIONS = [
   [0, -1],
@@ -66,9 +64,7 @@ class Game {
   }
   
   dropCluster() {
-    
     for (let bubble = 0; bubble < this.cluster.length; bubble++) {
-      
       this.cluster[bubble].status = 'placeholder';
       this.cluster[bubble].color = 'transparent';
     }
@@ -76,7 +72,6 @@ class Game {
   }
 
   isDisattached({c, r}) {
-
     if (this.bubbles[c][r - 1].status === 'placeholder') {
       if (this.bubbles[0][r].x === 23) {
        
@@ -87,11 +82,6 @@ class Game {
           return true;
         }
       } else {
-       
-        // if (c === 0 &&
-        //   this.bubbles[c + 1][r - 1].status === 'placeholder'){
-        //   return true;
-        // } else 
         if (c < this.columns - 1 &&
           this.bubbles[c + 1][r - 1].status === 'placeholder') {
           return true;
@@ -105,8 +95,6 @@ class Game {
   }
 
   detectFloatingBubbles() {
-    
-    
     this.floating = false;
     for (let c = 0; c < this.columns; c++) {
       for (let r = 1; r < this.rows; r++ ){ 
@@ -137,15 +125,11 @@ class Game {
                 if (this.bubbles[k][j].status === 'visible') {
                   this.cluster.push(this.bubbles[k][j]);
                   this.cluster
-                  
                 }
               }
             }
-          
-          
           this.dropCluster();
-          this.floating = true;
-          
+          this.floating = true;         
           } 
         } 
       }
@@ -168,9 +152,9 @@ class Game {
   }
 
   gameOver() {
-    var d = document.getElementBy("game-over");
+    var d = document.getElementById("game-over");
     d.display = "inline-block";
-    document.location.reload(); 
+    // document.location.reload(); 
   }
 
   // checkforGameOver() {
@@ -207,8 +191,8 @@ class Game {
           let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
 
           if (b.y >= 535) {
-            // clearInterval(interval);
-            // alert('Game Over');
+            console.log('game over');
+            this.gameOver();
             this.over = true; 
           }
 

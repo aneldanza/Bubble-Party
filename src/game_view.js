@@ -1,5 +1,3 @@
-// const Game = require('./game');
-const Bubble = require('./bubble');
 
 class GameView {
   constructor(game, ctx, colors, canvas) {
@@ -21,11 +19,6 @@ class GameView {
     this.ctx.beginPath();
     this.ctx.setLineDash([15, 10]);
     this.ctx.moveTo(this.canvas.width/2, this.canvas.height - 40);
-    // let targetX = relativeX * Math.cos(relativeY/relativeX);
-    // let targetY = relativeY * Math.sin(relativeY/relativeX);
-    // console.log('inside mouseMove function');
-    // debugger
-    // console.log('relativeX: ', relativeX);
     this.ctx.lineTo(relativeX, relativeY);
     this.ctx.stroke();
   }
@@ -34,19 +27,8 @@ class GameView {
     this.moveCount++;
     let clickedX = e.x - this.canvas.offsetLeft;
     let clickedY = e.y - this.canvas.offsetTop;
-    
-    // let dx = Math.floor(clickedX * Math.cos(clickedY/clickedX));
-    // let dy = Math.floor(clickedY * Math.sin(clickedY/clickedX));
     this.game.dx = (clickedX - this.canvas.width/2)/100;
     this.game.dy = (clickedY - 570)/100;
-    
-    // if (clickedX < 300) {
-    //   this.game.dx = (300 - dx) /(-100);
-    // } else {
-    //   this.game.dx = (dx - 300) / 100;
-    // }
-    
-    // this.game.dy = (550 - dy) / (-100);
     
     if (this.moveCount === 4) {
       this.game.addRow();

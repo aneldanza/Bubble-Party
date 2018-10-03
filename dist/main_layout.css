@@ -1,9 +1,11 @@
 html {
-  background-image: url(../images/background.png);
+  background-image: url(../images/background.png); 
+  background-size: cover;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  height: 100%;
 }
 
 .main-container {
@@ -51,19 +53,24 @@ html {
 #parent-container {
   width: 600px;
   height: 600px;
-  position: relative;
+  /* position: relative; */
   margin: auto;
 }
 
-.game-over {
+/* #message {
+  display: none;
+} */
+
+#game-over {
+  display: none;
   background-color: blue;
   border: 3px solid black;
   width: 600px;
   height: 600px;
   margin: auto;
   position: fixed;
-  z-index: 2;
-}
+  z-index: 0;
+} 
 
 #game {
   display: none;
