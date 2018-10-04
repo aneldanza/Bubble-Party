@@ -53,33 +53,47 @@ html {
 #parent-container {
   width: 600px;
   height: 600px;
-  /* position: relative; */
   margin: auto;
 }
 
-/* #message {
+#message {
   display: none;
-} */
+}
 
-#game-over {
-  display: none;
-  background-color: blue;
-  border: 3px solid black;
-  width: 600px;
-  height: 600px;
+.game-over {
+  background-color: rgba(2, 184, 232, 0.9);
+  width: 608px;
+  height: 608px;
   margin: auto;
   position: fixed;
   z-index: 0;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
 } 
 
-#game {
-  display: none;
-  width: 600px;
-  height: 600px;
-  margin: auto;
-  position: fixed;
-  z-index: 2;
+.game-over-message {
+  color: rgb(255, 251, 175);
+  font-family: 'Press Start 2P', cursive;
+  font-size: 40px;
 }
+
+#play-again {
+  font-family: 'Freckle Face', cursive;
+  /* text-shadow: 2px 4px rgb(84 115 150); */
+  letter-spacing: 3px;
+  font-size: 30px;
+  background-color:  rgba(2, 184, 232, 1.0);
+  border: 3px solid rgb(208, 47, 45);
+  color: rgb(208, 47, 45);
+  padding: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 
 #myCanvas {
   /* background-color: transparent; */

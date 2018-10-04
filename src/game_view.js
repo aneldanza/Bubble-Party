@@ -8,8 +8,31 @@ class GameView {
     this.radius = 20;
     this.moveCount = 0;
     this.handleMouseMove = this.handleMouseMove.bind(this);
+    // this.start = this.start.bind(this);
     document.addEventListener('mousemove', this.handleMouseMove, false);
-    document.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
+    canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
+    const playAgain = document.getElementById('play-again');
+    playAgain.addEventListener('mousedown', this.start.bind(this));
+    
+  }
+
+  start() {
+    document.location.reload();
+    this.game.over = false;
+    const d = document.getElementById("message");
+    d.style.display = 'none';
+    // document.addEventListener('mousemove', this.handleMouseMove, false);
+    debugger
+    const interval = setInterval(() => {
+      debugger
+      if (this.game.over) {
+        clearInterval(interval);
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        
+      } else {
+        this.draw();
+      }
+    }, 5);
   }
 
   handleMouseMove(e) {
@@ -74,22 +97,24 @@ class GameView {
         this.ctx.beginPath();
         this.ctx.arc(bubbleX, bubbleY, this.radius, 0, Math.PI*2);
         this.ctx.fillStyle = this.game.bubbles[c][r].color;
-        this.ctx.strokeStyle = 'blue';
-        this.ctx.stroke();
+        // this.ctx.strokeStyle = 'blue';
+        // this.ctx.stroke();
         this.ctx.fill();
         this.ctx.closePath();
-       
+        
+        if (bubbleY >=535 && this.game.bubbles[c][r].color !== 'transparent') {
+          this.game.over = true;
+          this.game.gameOver();
+        }
       }
     }
   }
   
   draw() {
-
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawPlayer();
     this.drawBubbles();
     this.game.detectCollision();
-    // this.game.checkforGameOver();
     if (this.game.x < this.radius || this.game.x > this.canvas.width - this.radius) {
       this.game.dx = -this.game.dx;
     }
@@ -100,8 +125,6 @@ class GameView {
     
     this.game.x += this.game.dx;
     this.game.y += this.game.dy;
-    // console.log('dx: ', this.game.x)
-    // console.log('at the end of draw function');
   
     // requestAnimationFrame(() => this.draw());
   }

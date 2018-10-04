@@ -152,18 +152,10 @@ class Game {
   }
 
   gameOver() {
-    var d = document.getElementById("game-over");
-    d.display = "inline-block";
-    // document.location.reload(); 
+    var d = document.getElementById("message");
+    d.className = "game-over";
+    d.style.display = 'grid'; 
   }
-
-  // checkforGameOver() {
-  //   for (let c = 0; c < this.columns; c++) {
-  //     if (this.bubbles[c][this.rows - 1].status === 'visible') {
-  //       this.gameOver();
-  //     }
-  //   }
-  // }
 
   createBubbles() {
     for (let c = 0; c < this.columns; c++) {
@@ -172,6 +164,16 @@ class Game {
         this.bubbles[c][r] = new Bubble(0,0,'transparent', 0,0, 'placeholder');
       }
     }
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
     this.addRow();
   }
 
@@ -190,14 +192,12 @@ class Game {
           this.dy = 0;
           let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
 
-          if (b.y >= 535) {
-            console.log('game over');
+          if (b.y >= 500) {
             this.gameOver();
             this.over = true; 
           }
 
             if (this.x < this.bubbles[c][r].x) {
-              // 
               if (this.bubbles[0][r].x === 23 && this.bubbles[c - 1] && r < this.rows) {
                 if (r + 1 < this.rows && this.bubbles[c - 1][r + 1].isAvailable()) {
                   newBubble.c = c - 1;

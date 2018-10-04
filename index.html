@@ -5,7 +5,8 @@
     <link rel="stylesheet" href="dist/reset.css" type="text/css">
     <link rel="stylesheet" href="dist/main_layout.css" type="text/css">
     <link rel="icon" type="image/png" href="./images/background.png" />
-    <link href="https://fonts.googleapis.com/css?family=Freckle+Face|Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Freckle+Face|Montserrat|Press+Start+2P" rel="stylesheet">
+   
     <title>Bubble Party</title>
     <style>
     	* { padding: 0; margin: 0; }
@@ -22,11 +23,14 @@
       </nav>
     </nav>
     <div id='parent-container'>
-      <div id='game-over'></div>
+      <div id='message'>
+        <span class='game-over-message'>GAME OVER</span>
+        <span id='play-again'>Play Again</span>
+      </div>
       <canvas id="myCanvas" width="600" height="600"></canvas>
     </div>
     <nav class='bottom-nav'>
-      <button class='game-button'>Start</button>
+      <button class='game-button' id='start'>Start</button>
       <button class='game-button'>Quit</button>
       <button class='game-button'>Mute</button>
     </nav>
