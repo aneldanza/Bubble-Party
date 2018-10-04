@@ -165,16 +165,7 @@ class Game {
       }
     }
     this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
+    
   }
 
   detectCollision() {

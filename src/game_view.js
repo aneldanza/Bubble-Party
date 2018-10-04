@@ -65,8 +65,8 @@ class GameView {
     this.ctx.arc(this.game.x, this.game.y, this.radius, 0, Math.PI*2);
     this.ctx.fillStyle = this.game.player.color;
     this.ctx.fill();
-    this.ctx.strokeStyle = 'blue';
-    this.ctx.stroke();
+    // this.ctx.strokeStyle = 'blue';
+    // this.ctx.stroke();
     this.ctx.closePath;
   }
 
