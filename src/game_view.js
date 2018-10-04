@@ -8,7 +8,6 @@ class GameView {
     this.radius = 20;
     this.moveCount = 0;
     this.handleMouseMove = this.handleMouseMove.bind(this);
-    // this.start = this.start.bind(this);
     document.addEventListener('mousemove', this.handleMouseMove, false);
     canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
     const playAgain = document.getElementById('play-again');
@@ -21,14 +20,10 @@ class GameView {
     this.game.over = false;
     const d = document.getElementById("message");
     d.style.display = 'none';
-    // document.addEventListener('mousemove', this.handleMouseMove, false);
-    debugger
     const interval = setInterval(() => {
-      debugger
       if (this.game.over) {
         clearInterval(interval);
         document.removeEventListener('mousemove', this.handleMouseMove);
-        
       } else {
         this.draw();
       }
@@ -59,14 +54,11 @@ class GameView {
     }
   }
 
-
   drawPlayer() {
     this.ctx.beginPath();
     this.ctx.arc(this.game.x, this.game.y, this.radius, 0, Math.PI*2);
     this.ctx.fillStyle = this.game.player.color;
     this.ctx.fill();
-    // this.ctx.strokeStyle = 'blue';
-    // this.ctx.stroke();
     this.ctx.closePath;
   }
 

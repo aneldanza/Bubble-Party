@@ -35,6 +35,8 @@ class Game {
     this.cluster = [];
     this.newPlayer();
     this.over = false;
+    const stop = document.getElementById('quit');
+    stop.addEventListener('mousedown', this.gameOver.bind(this));
   }
 
   searchForCluster(bubble) {
@@ -165,19 +167,22 @@ class Game {
       }
     }
     this.addRow();
-    
+  }
+
+  collision(bubble) {
+    return bubble.status === 'visible'
+    && this.x > bubble.x - bubble.radius - 1
+    && this.x < bubble.x + bubble.radius 
+    && this.y > bubble.y 
+    && this.y <= bubble.y + bubble.radius
   }
 
   detectCollision() {
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let b = this.bubbles[c][r];
-        
-        if (b.status === 'visible'
-          && this.x > b.x - b.radius - 1
-          && this.x < b.x + b.radius 
-          && this.y > b.y 
-          && this.y <= b.y + 2 * b.radius + 1) 
+        debugger
+        if (this.collision.call(this, b)) 
           {
           this.dx = 0;
           this.dy = 0;
