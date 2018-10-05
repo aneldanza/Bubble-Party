@@ -35,7 +35,9 @@ class Game {
     this.cluster = [];
     this.newPlayer();
     this.over = false;
-    this.collision = false;
+    this.bottomCollision = false;
+    this.leftSideCollision = false;
+    this.rightSideCollision = false;
     const stop = document.getElementById('quit');
     stop.addEventListener('mousedown', this.gameOver.bind(this));
   }
@@ -171,51 +173,75 @@ class Game {
   }
 
   isBottomCollision(bubble) {
-    this.bottomCollision = true;
-    return bubble.status === 'visible'
-    && this.x > bubble.x - bubble.radius - 1
-    && this.x < bubble.x + bubble.radius + 1
-    && this.y > bubble.y 
-    && this.y <= bubble.y + 2 * bubble.radius + 1;
+    if (
+      bubble.status === 'visible'
+      && this.x > bubble.x - bubble.radius - 1
+      && this.x < bubble.x + bubble.radius + 1
+      && this.y > bubble.y 
+      && this.y <= bubble.y + 2 * bubble.radius + 1) {
+        this.bottomCollision = true;
+        return true;
+      } 
+      return false;
   }
   
   isRightSideCollision(bubble) {
-    this.rightSideCollision = true;
-    return bubble.status === 'visible'
-    && this.y > bubble.y - bubble.radius - 1
-    && this.y < bubble.y + bubble.radius + 1
-    && this.x > bubble.x 
-    && this.x <= bubble.x + 2 * bubble.radius + 1;
+    if (
+      bubble.status === 'visible'
+      && this.y > bubble.y - bubble.radius - 1
+      && this.y < bubble.y + bubble.radius + 1
+      && this.x > bubble.x 
+      && this.x <= bubble.x + 2 * bubble.radius) {
+        this.rightSideCollision = true;
+        return true;
+    }
+    return false;
   }
   
   isLeftSideCollision(bubble) {
-    this.leftSideCollision = true;
-    return bubble.status === 'visible'
-    && this.y > bubble.y - bubble.radius - 1
-    && this.y < bubble.y + bubble.radius + 1
-    && this.x < bubble.x 
-    && this.x >= bubble.x - 2 * bubble.radius + 1;
+    if (
+      bubble.status === 'visible'
+      && this.y > bubble.y - bubble.radius - 1
+      && this.y < bubble.y + bubble.radius + 1
+      && this.x < bubble.x 
+      && this.x >= bubble.x - 2 * bubble.radius
+    ) {
+      this.leftSideCollision = true;
+      return true;
+    }
+    return false;
   }
 
   handleBottomCollision(bubble) {
-    debugger
+    this.bottomCollision = false;
     if (this.x < bubble.x) {
-      debugger
       if (this.bubbles[0][bubble.r].x === 23) {
-        debugger
         return [bubble.c - 1, bubble.r + 1];
       } else {
-        debugger
         return [bubble.c, bubble.r + 1]
       }
     } else {
       if (this.bubbles[0][bubble.r].x === 23) {
-        debugger
         return [bubble.c, bubble.r + 1];
       } else {
-        debugger
         return [bubble.c + 1, bubble.r + 1]
       }
+    }
+  }
+  
+  handleLeftSideCollision(bubble) {
+    debugger
+    this.leftSideCollision = false;
+    return [bubble.c - 1, bubble.r];
+  }
+  
+  handleRightSideCollision(bubble) {
+    debugger
+    this.rightSideCollision = false;
+    if (bubble.c === this.columns - 1) {
+      this.handleBottomCollision.call(this.bubble);
+    } else {
+      return [bubble.c + 1, bubble.r];
     }
   }
   
@@ -236,16 +262,20 @@ class Game {
             this.gameOver();
             this.over = true; 
           }
-          
+          debugger
           let coordinates = [];
           if (this.bottomCollision) {
             coordinates = this.handleBottomCollision.call(this, bubble);
-            debugger
-           
-            newBubble.c = coordinates[0];
-            newBubble.r = coordinates[1];
-            this.bubbles[newBubble.c][newBubble.r] = newBubble;
-          }
+          } else if (this.leftSideCollision) {
+            coordinates = this.handleLeftSideCollision.call(this, bubble);
+          } else if (this.rightSideCollision) {
+            coordinates = this.handleRightSideCollision.call(this, bubble);
+          } 
+
+          newBubble.c = coordinates[0];
+          newBubble.r = coordinates[1];
+          this.bubbles[newBubble.c][newBubble.r] = newBubble;
+
           // if (this.x < bubble.x) {
           //     if (this.bubbles[0][r].x === 23 && this.bubbles[c - 1] && r < this.rows) {
           //       debugger
