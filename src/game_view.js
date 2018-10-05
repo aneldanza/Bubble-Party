@@ -107,6 +107,8 @@ class GameView {
     this.drawPlayer();
     this.drawBubbles();
     this.game.detectCollision();
+    let score = document.getElementById('score');
+    score.innerHTML = `score: ${this.game.score}`;
     if (this.game.x < this.radius || this.game.x > this.canvas.width - this.radius) {
       this.game.dx = -this.game.dx;
     }

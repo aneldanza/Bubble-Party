@@ -32,7 +32,7 @@ html {
 .top-nav {
   display: grid;
   grid-gap: 35px;
-  grid-template-columns: repeat(3, minmax(100px, auto));
+  grid-template-columns: repeat(4, minmax(100px, auto));
   justify-content: end;
   margin-top: 20px;
   align-content: center;
