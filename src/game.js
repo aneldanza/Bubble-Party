@@ -33,7 +33,6 @@ class Game {
     this.createBubbles();
     this.fullRowCount = 1;
     this.score = 0;
-    debugger
     this.highestScore = this.highestScore || 0;
     this.cluster = [];
     this.newPlayer();
@@ -80,7 +79,10 @@ class Game {
       this.cluster[bubble].status = 'placeholder';
       this.cluster[bubble].color = 'transparent';
     }
-    this.score += this.cluster.length;
+    if (this.cluster.length > 0) {
+
+      this.score += this.cluster.length;
+    }
     this.cluster = [];
   }
 
@@ -111,7 +113,6 @@ class Game {
   }
 
   detectFloatingBubbles() {
-    
     this.floating = false;
     for (let c = 0; c < this.columns; c++) {
       for (let r = 1; r < this.rows; r++ ){ 
@@ -173,17 +174,19 @@ class Game {
   }
 
   gameOver() {
+    
+    let score = document.getElementById('current-score');
+    let currentScore = this.score;
+    score.innerHTML = currentScore;
     var d = document.getElementById("message");
     d.className = "game-over";
     d.style.display = 'grid'; 
-    let score = document.getElementById('current-score');
-    let highestScore = document.getElementById('highest-score');
-    let currentScore = this.score;
-    score.innerHTML = currentScore;
-    if (this.score > this.highestScore) {
-      this.highestScore = this.score;
-    }
-    highestScore.innerHTML = this.highestScore;
+    // let highestScore = document.getElementById('highest-score');
+    // if (this.score > this.highestScore) {
+    //   this.highestScore = this.score;
+    // }
+    // highestScore.innerHTML = this.highestScore;
+    this.over = true;
     this.score = 0;
   }
 
@@ -195,17 +198,15 @@ class Game {
       }
     }
     this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    // this.addRow();
-    
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
+    this.addRow();
   }
 
   isBottomCollision(bubble) {
@@ -214,7 +215,7 @@ class Game {
       && this.x > bubble.x - bubble.radius - 1
       && this.x < bubble.x + bubble.radius + 1
       && this.y > bubble.y 
-      && this.y <= bubble.y + 2 * bubble.radius + 1) {
+      && this.y <= bubble.y + 2 * bubble.radius + 2) {
         this.bottomCollision = true;
         return true;
       } 
@@ -224,11 +225,11 @@ class Game {
   isRightSideCollision(bubble) {
     if (
       bubble.status === 'visible'
-      && this.y > bubble.y - bubble.radius + 3
+      && this.y > bubble.y - bubble.radius
       && this.y < bubble.y + bubble.radius
       && this.x > bubble.x 
-      && this.x <= bubble.x + 2 * bubble.radius) {
-        this.rightSideCollision = true;
+      && this.x <= bubble.x + 2 * bubble.radius - 5) {
+        this.rightSideCollision = true; 
         return true;
     }
     return false;
@@ -240,49 +241,51 @@ class Game {
       && this.y > bubble.y - bubble.radius
       && this.y < bubble.y + bubble.radius
       && this.x < bubble.x 
-      && this.x >= bubble.x - 2 * bubble.radius + 1
-    ) {
-      this.leftSideCollision = true;
-      return true;
-    }
-    return false;
-  }
-
-  handleBottomCollision(bubble) {
-    
-    this.bottomCollision = false;
-    if (this.x < bubble.x) {
-
-      if (this.bubbles[0][bubble.r].x === 23 && bubble.c > 0) {
-        return [bubble.c - 1, bubble.r + 1];
-      } else {
-        return [bubble.c, bubble.r + 1]
+      && this.x >= bubble.x - 2 * bubble.radius + 5
+      ) {
+        this.leftSideCollision = true;
+        return true;
       }
-    } else {
-      if (this.bubbles[0][bubble.r].x === 23) {
-        return [bubble.c, bubble.r + 1];
-      } else {
-        if (bubble.c === this.columns - 1) {
-          return [bubble.c, bubble.r + 1]
+      return false;
+    }
+    
+    handleBottomCollision(bubble) {
+      
+      this.bottomCollision = false;
+      if (this.x < bubble.x) {
+        
+        if (this.bubbles[0][bubble.r].x === 23 && bubble.c > 0) {
+          return [bubble.c - 1, bubble.r + 1];
         } else {
-          return [bubble.c + 1, bubble.r + 1]
+          return [bubble.c, bubble.r + 1]
+        }
+      } else {
+        if (this.bubbles[0][bubble.r].x === 23) {
+          return [bubble.c, bubble.r + 1];
+        } else {
+          if (bubble.c === this.columns - 1) {
+            return [bubble.c, bubble.r + 1]
+          } else {
+            return [bubble.c + 1, bubble.r + 1]
+          }
         }
       }
     }
-  }
-  
-  handleLeftSideCollision(bubble) {
     
-    this.leftSideCollision = false;
-    return [bubble.c - 1, bubble.r];
-  }
-  
-  handleRightSideCollision(bubble) {
+    handleLeftSideCollision(bubble) {
+      
+      
+      this.leftSideCollision = false;
+      return [bubble.c - 1, bubble.r];
+    }
     
-    this.rightSideCollision = false;
-    if (bubble.c === this.columns - 1) {
-      this.handleBottomCollision.call(this.bubble);
-    } else {
+    handleRightSideCollision(bubble) {
+      
+      
+      this.rightSideCollision = false;
+      if (bubble.c === this.columns - 1) {
+        this.handleBottomCollision.call(this.bubble);
+      } else {
       return [bubble.c + 1, bubble.r];
     }
   }
@@ -312,8 +315,10 @@ class Game {
           let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
   
           if (bubble.y >= 500) {
+            
+            
             this.gameOver();
-            this.over = true; 
+            return
           }
        
           let coordinates = [];
@@ -330,57 +335,7 @@ class Game {
 
           newBubble.c = coordinates[0];
           newBubble.r = coordinates[1];
-       
           this.bubbles[newBubble.c][newBubble.r] = newBubble;
-  
-          // if (this.x < bubble.x) {
-          //     if (this.bubbles[0][r].x === 23 && this.bubbles[c - 1] && r < this.rows) {
-          //       debugger
-          //       if (r + 1 < this.rows && this.bubbles[c - 1][r + 1].isAvailable()) {
-          //         newBubble.c = c - 1;
-          //         newBubble.r = r + 1;
-          //         this.bubbles[c - 1][r + 1] = newBubble;
-              
-          //       } else {
-          //         newBubble.c = c - 1;
-          //         newBubble.r = r;
-          //         this.bubbles[c - 1][r] = newBubble;
-          //       } 
-          //     } else {
-          //       if (this.bubbles[c] && this.bubbles[c][r + 1].isAvailable()) {
-          //         newBubble.c = c;
-          //         newBubble.r = r + 1;
-          //         this.bubbles[c][r + 1] = newBubble;
-          //       } else if (this.bubbles[c - 1]) {
-          //         newBubble.c = c - 1;
-          //         newBubble.r = r;
-          //         this.bubbles[c - 1][r] = newBubble;
-          //       }
-          //     }
-          //   } else {
-          //     // 
-          //     if (this.bubbles[0][r].x === 23) {
-          //       if (this.bubbles[c][r + 1] && this.bubbles[c][r + 1].isAvailable()) {
-          //         newBubble.c = c;
-          //         newBubble.r = r + 1;
-          //         this.bubbles[c][r + 1] = newBubble;
-          //       } else if (this.bubbles[c + 1]){
-          //         newBubble.c = c + 1;
-          //         newBubble.r = r;
-          //         this.bubbles[c + 1][r] = newBubble;
-          //       } 
-          //     } else {
-          //       if (this.bubbles[c + 1][r + 1] && this.bubbles[c + 1][r + 1].isAvailable()) {
-          //         newBubble.c = c + 1;
-          //         newBubble.r = r + 1;
-          //         this.bubbles[c + 1][r + 1] = newBubble;
-          //       } else {
-          //         newBubble.c = c + 1;
-          //         newBubble.r = r;
-          //         this.bubbles[c + 1][r] = newBubble;
-          //       }
-          //     }
-          //   }
 
           let cluster = this.searchForCluster.call(this, newBubble);  
             if (cluster.length > 2) {  

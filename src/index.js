@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(interval);
         document.removeEventListener('mousemove', game_view.handleMouseMove);
         
-      } else {
+      } else if(!game_view.pause) {
         game_view.draw()
         
       }
@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   
-  const playAgain = document.getElementById('start');
-  playAgain.addEventListener('mousedown', game_view.start);
+  // const playAgain = document.getElementById('start');
+  // playAgain.addEventListener('mousedown', game_view.start);
 
 
 });

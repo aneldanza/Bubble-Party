@@ -7,17 +7,32 @@ class GameView {
     this.canvas = canvas;
     this.radius = 20;
     this.moveCount = 0;
+    this.pause = false;
     this.handleMouseMove = this.handleMouseMove.bind(this);
     document.addEventListener('mousemove', this.handleMouseMove, false);
     canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
+    
     const playAgain = document.getElementById('play-again');
     playAgain.addEventListener('mousedown', this.start.bind(this));
     
+    const pause = document.getElementById('pause');
+    pause.addEventListener('mousedown', this.handlePause.bind(this));
+  }
+  
+  handlePause() {
+    if (this.pause) {
+      this.pause = false;
+      document.addEventListener('mousemove', this.handleMouseMove, false);
+      
+    } else {
+      this.pause = true;
+      document.removeEventListener('mousemove', this.handleMouseMove, false);
+    }
   }
 
   start() {
-    document.location.reload();
     this.game.over = false;
+    document.location.reload();
     const d = document.getElementById("message");
     d.style.display = 'none';
     const interval = setInterval(() => {
@@ -69,15 +84,12 @@ class GameView {
       for (let r = 0; r < this.game.bubbles[c].length; r++) {
         let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;
         if (this.game.fullRowCount % 2 === 0) {
-        
           if (r % 2 === 0) {
             bubbleX += this.radius;
-    
           }
         } else {
           if (r % 2 !== 0) {
             bubbleX += this.radius;
-        
           }
         } 
         let bubbleY = (2 * this.radius + topOffset) * r + this.radius;
@@ -94,9 +106,7 @@ class GameView {
         this.ctx.closePath();
         
         if (bubbleY >=535 && this.game.bubbles[c][r].color !== 'transparent') {
-          debugger
           this.game.gameOver();
-          this.game.over = true;
         }
       }
     }
@@ -109,7 +119,6 @@ class GameView {
     this.game.detectCollision();
     let score = document.getElementById('score');
     score.innerHTML = `Score: ${this.game.score}`;
-    
     if (this.game.x < this.radius || this.game.x > this.canvas.width - this.radius) {
       this.game.dx = -this.game.dx;
     }
