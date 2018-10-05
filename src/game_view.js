@@ -95,8 +95,8 @@ class GameView {
         
         if (bubbleY >=535 && this.game.bubbles[c][r].color !== 'transparent') {
           debugger
-          this.game.over = true;
           this.game.gameOver();
+          this.game.over = true;
         }
       }
     }
@@ -108,7 +108,8 @@ class GameView {
     this.drawBubbles();
     this.game.detectCollision();
     let score = document.getElementById('score');
-    score.innerHTML = `score: ${this.game.score}`;
+    score.innerHTML = `Score: ${this.game.score}`;
+    
     if (this.game.x < this.radius || this.game.x > this.canvas.width - this.radius) {
       this.game.dx = -this.game.dx;
     }

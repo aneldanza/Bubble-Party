@@ -33,6 +33,8 @@ class Game {
     this.createBubbles();
     this.fullRowCount = 1;
     this.score = 0;
+    debugger
+    this.highestScore = this.highestScore || 0;
     this.cluster = [];
     this.newPlayer();
     this.over = false;
@@ -174,6 +176,14 @@ class Game {
     var d = document.getElementById("message");
     d.className = "game-over";
     d.style.display = 'grid'; 
+    let score = document.getElementById('current-score');
+    let highestScore = document.getElementById('highest-score');
+    let currentScore = this.score;
+    score.innerHTML = currentScore;
+    if (this.score > this.highestScore) {
+      this.highestScore = this.score;
+    }
+    highestScore.innerHTML = this.highestScore;
     this.score = 0;
   }
 
@@ -185,6 +195,17 @@ class Game {
       }
     }
     this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    // this.addRow();
+    
   }
 
   isBottomCollision(bubble) {
