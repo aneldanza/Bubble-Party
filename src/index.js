@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
   var canvas = document.getElementById("myCanvas");
   var ctx = canvas.getContext("2d");
   
-  let colors = ['blue', 'yellow', 'red', 'purple', 'green', 'pink']
+  // let colors = ['blue', 'yellow', 'red', 'purple', 'green', 'pink']
+  let colors = ['blue', 'yellow', 'red']
   
   let game = new Game(colors, canvas);
   let game_view = new GameView(game, ctx, colors, canvas);

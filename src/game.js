@@ -28,24 +28,25 @@ class Game {
     this.canvas = canvas;
     this.floating = true;
     this.columns = 14;
-    this.rows = 13;
+    this.rows = 14;
     this.moveCount = 0;
     this.createBubbles();
     this.fullRowCount = 1;
-    this.moveCount = 0;
+    // this.moveCount = 0;
     this.cluster = [];
     this.newPlayer();
     this.over = false;
     this.bottomCollision = false;
     this.leftSideCollision = false;
     this.rightSideCollision = false;
+    this.topBorderCollision = false;
     const stop = document.getElementById('quit');
     stop.addEventListener('mousedown', this.gameOver.bind(this));
   }
 
   searchForCluster(bubble) {
      this.cluster.push(bubble);
-
+    console.log('pushed :', bubble)
      for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
        let c, r;
        if (this.bubbles[0][bubble.r].x === 23) {
@@ -56,14 +57,17 @@ class Game {
         r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
        }
        
+       console.log('checking coordinates: ', c, r)
+       console.log('c > this.columns || c < 0 || r > this.rows || r < 0: ', c > this.columns || c < 0 || r > this.rows || r < 0);
+       console.log('this.cluster :', this.cluster);
        if (c > this.columns || c < 0 || r > this.rows || r < 0) {
-          continue;
+         continue;
         } else if (this.bubbles[c] &&
           this.bubbles[c][r] &&
           this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
-         
-          this.searchForCluster(this.bubbles[c][r]);
-        }
+            console.log('checking bubble: ', this.bubbles[c][r])
+            this.searchForCluster(this.bubbles[c][r]);
+          }
      }
    
     return this.cluster;
@@ -78,6 +82,10 @@ class Game {
   }
 
   isDisattached({c, r}) {
+    // console.log('coordinates of bubble are c and r', c, r)
+    if (r === 0) {
+      return false;
+    }
     if (this.bubbles[c][r - 1].status === 'placeholder') {
       if (this.bubbles[0][r].x === 23) {
        
@@ -105,7 +113,7 @@ class Game {
     for (let c = 0; c < this.columns; c++) {
       for (let r = 1; r < this.rows; r++ ){ 
       
-        if ((this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) && c === 0) ||(this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) 
+        if ((this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) && c === 0 && r > 0) ||(this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) 
         && this.bubbles[c - 1][r].status === 'placeholder'))
         {      
           this.cluster.push(this.bubbles[c][r]);
@@ -135,11 +143,13 @@ class Game {
               }
             }
           this.dropCluster();
-          this.floating = true;         
+          this.floating = true;  
+
           } 
         } 
       }
     }
+  
   }
 
   addRow() {
@@ -153,7 +163,6 @@ class Game {
       let color = this.colors[Math.floor(Math.random() * this.colors.length)];
       this.bubbles[c][0] = new Bubble(0, 0, color, 0, 0, 'visible');
     }
-
     this.fullRowCount++;
   }
 
@@ -213,10 +222,18 @@ class Game {
     return false;
   }
 
+  // isTopBorderCollision() {  
+  //   debugger
+  //   if (this.y < this.radius) {
+  //     this.topBorderCollision = true;
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
   handleBottomCollision(bubble) {
     console.log('bottom collision');
     this.bottomCollision = false;
-    debugger
     if (this.x < bubble.x) {
 
       if (this.bubbles[0][bubble.r].x === 23 && bubble.c > 0) {
@@ -228,20 +245,22 @@ class Game {
       if (this.bubbles[0][bubble.r].x === 23) {
         return [bubble.c, bubble.r + 1];
       } else {
-        return [bubble.c + 1, bubble.r + 1]
+        if (bubble.c === this.columns - 1) {
+          return [bubble.c, bubble.r + 1]
+        } else {
+          return [bubble.c + 1, bubble.r + 1]
+        }
       }
     }
   }
   
   handleLeftSideCollision(bubble) {
     console.log('left collision');
-    debugger
     this.leftSideCollision = false;
     return [bubble.c - 1, bubble.r];
   }
   
   handleRightSideCollision(bubble) {
-    debugger
     console.log('right collision');
     this.rightSideCollision = false;
     if (bubble.c === this.columns - 1) {
@@ -250,13 +269,24 @@ class Game {
       return [bubble.c + 1, bubble.r];
     }
   }
+
+  handleTopBorderCollision() {
+    this.topBorderCollision = false;
+    for(let c = 0; c < this.columns; c++) {
+      if (this.x < this.bubbles[c][0].x + 20 &&
+          this.x > this.bubbles[c][0].x - 20) {
+            return [c, 0];
+          }
+    }
+  }
   
   detectCollision() {
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let bubble = this.bubbles[c][r];
         
-        if (this.isBottomCollision.call(this, bubble) ||
+        if (this.topBorderCollision ||
+            this.isBottomCollision.call(this, bubble) ||
             this.isLeftSideCollision.call(this, bubble) ||
             this.isRightSideCollision.call(this, bubble)) 
           {
@@ -268,8 +298,11 @@ class Game {
             this.gameOver();
             this.over = true; 
           }
-          debugger
+       
           let coordinates = [];
+          if (this.topBorderCollision) {
+            coordinates = this.handleTopBorderCollision.call(this);
+          }
           if (this.bottomCollision) {
             coordinates = this.handleBottomCollision.call(this, bubble);
           } else if (this.leftSideCollision) {
@@ -280,12 +313,9 @@ class Game {
 
           newBubble.c = coordinates[0];
           newBubble.r = coordinates[1];
+       
           this.bubbles[newBubble.c][newBubble.r] = newBubble;
-          if (this.moveCount === 4) {
-            this.addRow();
-            this.moveCount = 0;
-          }
-
+  
           // if (this.x < bubble.x) {
           //     if (this.bubbles[0][r].x === 23 && this.bubbles[c - 1] && r < this.rows) {
           //       debugger

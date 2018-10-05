@@ -6,7 +6,7 @@ class GameView {
     this.colors = colors;
     this.canvas = canvas;
     this.radius = 20;
-    // this.moveCount = 0;
+    this.moveCount = 0;
     this.handleMouseMove = this.handleMouseMove.bind(this);
     document.addEventListener('mousemove', this.handleMouseMove, false);
     canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
@@ -42,11 +42,15 @@ class GameView {
   }
   
   handleMouseClick(e) {
-    this.game.moveCount++;
+    this.moveCount++;
     let clickedX = e.x - this.canvas.offsetLeft;
     let clickedY = e.y - this.canvas.offsetTop;
     this.game.dx = (clickedX - this.canvas.width/2)/50;
     this.game.dy = (clickedY - 570)/50;
+    if (this.moveCount === 4) {
+      setTimeout(this.game.addRow.bind(this.game), 1000);
+      this.moveCount = 0;
+    }
   }
 
   drawPlayer() {
@@ -90,6 +94,7 @@ class GameView {
         this.ctx.closePath();
         
         if (bubbleY >=535 && this.game.bubbles[c][r].color !== 'transparent') {
+          debugger
           this.game.over = true;
           this.game.gameOver();
         }
@@ -106,8 +111,12 @@ class GameView {
       this.game.dx = -this.game.dx;
     }
     
-    if (this.game.y < this.radius || this.game.y > this.canvas.height - this.radius) {
+    if (this.game.y > this.canvas.height - this.radius) {
       this.game.dy = -this.game.dy;
+    }
+
+    if (this.game.y < this.radius) {
+      this.game.topBorderCollision = true;
     }
     
     this.game.x += this.game.dx;
