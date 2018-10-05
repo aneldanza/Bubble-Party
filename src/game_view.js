@@ -88,8 +88,8 @@ class GameView {
         this.ctx.beginPath();
         this.ctx.arc(bubbleX, bubbleY, this.radius, 0, Math.PI*2);
         this.ctx.fillStyle = this.game.bubbles[c][r].color;
-        this.ctx.strokeStyle = 'blue';
-        this.ctx.stroke();
+        // this.ctx.strokeStyle = 'blue';
+        // this.ctx.stroke();
         this.ctx.fill();
         this.ctx.closePath();
         
