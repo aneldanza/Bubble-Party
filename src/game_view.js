@@ -6,7 +6,7 @@ class GameView {
     this.colors = colors;
     this.canvas = canvas;
     this.radius = 20;
-    this.moveCount = 0;
+    // this.moveCount = 0;
     this.handleMouseMove = this.handleMouseMove.bind(this);
     document.addEventListener('mousemove', this.handleMouseMove, false);
     canvas.addEventListener('mousedown', this.handleMouseClick.bind(this), false);
@@ -42,16 +42,11 @@ class GameView {
   }
   
   handleMouseClick(e) {
-    this.moveCount++;
+    this.game.moveCount++;
     let clickedX = e.x - this.canvas.offsetLeft;
     let clickedY = e.y - this.canvas.offsetTop;
-    this.game.dx = (clickedX - this.canvas.width/2)/100;
-    this.game.dy = (clickedY - 570)/100;
-    
-    if (this.moveCount === 4) {
-      this.game.addRow();
-      this.moveCount = 0;
-    }
+    this.game.dx = (clickedX - this.canvas.width/2)/50;
+    this.game.dy = (clickedY - 570)/50;
   }
 
   drawPlayer() {
@@ -63,9 +58,9 @@ class GameView {
   }
 
   drawBubbles() {
-    let bubblePadding = 1;
+    let bubblePadding = 3;
     let leftOffset = 3;
-    let topOffset = 3;
+    let topOffset = 0;
     for (let c = 0; c < this.game.bubbles.length; c++) {
       for (let r = 0; r < this.game.bubbles[c].length; r++) {
         let bubbleX = (bubblePadding + 2*this.radius) * c + this.radius + leftOffset;

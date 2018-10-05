@@ -32,6 +32,7 @@ class Game {
     this.moveCount = 0;
     this.createBubbles();
     this.fullRowCount = 1;
+    this.moveCount = 0;
     this.cluster = [];
     this.newPlayer();
     this.over = false;
@@ -188,8 +189,8 @@ class Game {
   isRightSideCollision(bubble) {
     if (
       bubble.status === 'visible'
-      && this.y > bubble.y - bubble.radius - 1
-      && this.y < bubble.y + bubble.radius + 1
+      && this.y > bubble.y - bubble.radius + 3
+      && this.y < bubble.y + bubble.radius
       && this.x > bubble.x 
       && this.x <= bubble.x + 2 * bubble.radius) {
         this.rightSideCollision = true;
@@ -201,10 +202,10 @@ class Game {
   isLeftSideCollision(bubble) {
     if (
       bubble.status === 'visible'
-      && this.y > bubble.y - bubble.radius - 1
-      && this.y < bubble.y + bubble.radius + 1
+      && this.y > bubble.y - bubble.radius
+      && this.y < bubble.y + bubble.radius
       && this.x < bubble.x 
-      && this.x >= bubble.x - 2 * bubble.radius
+      && this.x >= bubble.x - 2 * bubble.radius + 1
     ) {
       this.leftSideCollision = true;
       return true;
@@ -213,9 +214,12 @@ class Game {
   }
 
   handleBottomCollision(bubble) {
+    console.log('bottom collision');
     this.bottomCollision = false;
+    debugger
     if (this.x < bubble.x) {
-      if (this.bubbles[0][bubble.r].x === 23) {
+
+      if (this.bubbles[0][bubble.r].x === 23 && bubble.c > 0) {
         return [bubble.c - 1, bubble.r + 1];
       } else {
         return [bubble.c, bubble.r + 1]
@@ -230,6 +234,7 @@ class Game {
   }
   
   handleLeftSideCollision(bubble) {
+    console.log('left collision');
     debugger
     this.leftSideCollision = false;
     return [bubble.c - 1, bubble.r];
@@ -237,6 +242,7 @@ class Game {
   
   handleRightSideCollision(bubble) {
     debugger
+    console.log('right collision');
     this.rightSideCollision = false;
     if (bubble.c === this.columns - 1) {
       this.handleBottomCollision.call(this.bubble);
@@ -275,6 +281,10 @@ class Game {
           newBubble.c = coordinates[0];
           newBubble.r = coordinates[1];
           this.bubbles[newBubble.c][newBubble.r] = newBubble;
+          if (this.moveCount === 4) {
+            this.addRow();
+            this.moveCount = 0;
+          }
 
           // if (this.x < bubble.x) {
           //     if (this.bubbles[0][r].x === 23 && this.bubbles[c - 1] && r < this.rows) {
