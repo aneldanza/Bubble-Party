@@ -198,15 +198,6 @@ class Game {
       }
     }
     this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
-    this.addRow();
   }
 
   isBottomCollision(bubble) {
@@ -315,8 +306,6 @@ class Game {
           let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
   
           if (bubble.y >= 500) {
-            
-            
             this.gameOver();
             return
           }
