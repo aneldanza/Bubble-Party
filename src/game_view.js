@@ -1,3 +1,4 @@
+const Sound = require('./sound');
 
 class GameView {
   constructor(game, ctx, colors, canvas) {
@@ -17,6 +18,24 @@ class GameView {
     
     const pause = document.getElementById('pause');
     pause.addEventListener('mousedown', this.handlePause.bind(this));
+
+    this.backgroundSound = new Sound('./sounds/background.mp3');
+
+    const mute = document.getElementById('mute');
+    mute.addEventListener('mousedown', this.handleMute.bind(this));
+    this.mute = true;
+  }
+
+  handleMute() {
+    if (this.mute) {
+      this.mute = false;
+      debugger
+      this.backgroundSound.play();
+    } else {
+      debugger
+      this.mute = true;
+      this.backgroundSound.stop();
+    }
   }
   
   handlePause() {
@@ -62,7 +81,7 @@ class GameView {
     let clickedY = e.y - this.canvas.offsetTop;
     this.game.dx = (clickedX - this.canvas.width/2)/50;
     this.game.dy = (clickedY - 570)/50;
-    if (this.moveCount === 4) {
+    if (this.moveCount === 6) {
       setTimeout(this.game.addRow.bind(this.game), 1000);
       this.moveCount = 0;
     }
@@ -116,6 +135,7 @@ class GameView {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawPlayer();
     this.drawBubbles();
+    // this.backgroundSound.play();
     this.game.detectCollision();
     let score = document.getElementById('score');
     score.innerHTML = `Score: ${this.game.score}`;

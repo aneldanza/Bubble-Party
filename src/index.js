@@ -4,6 +4,18 @@ const GameView = require('./game_view');
 // export let interval;
 
 document.addEventListener('DOMContentLoaded', () => {
+  // var config = {
+  //   apiKey: "apiKey",
+  //   authDomain: "projectId.firebaseapp.com",
+  //   databaseURL: "https://databaseName.firebaseio.com",
+  //   storageBucket: "bucket.appspot.com"
+  // };
+
+  // firebase.initializeApp(config);
+
+  // // Get a reference to the database service
+  // var database = firebase.database();
+
   var canvas = document.getElementById("myCanvas");
   var ctx = canvas.getContext("2d");
   
