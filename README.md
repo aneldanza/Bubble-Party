@@ -38,5 +38,5 @@ Here are the **MVPs**:
 Additional feature for the future development:
 
 ### Backend
-There will be a Users table with following columns: id, username, score. I will use Rails and Active Record
+There will be a Users table with following columns: id, username, score. I will use Firebase to store and update information
 
