@@ -1,6 +1,6 @@
 # Bubble-Party
 
-[[images/game_image.png]]
+![](images/game_image.png)
 
 This is a game that engages user to "shoot" bubbles to gain score points. Game starts off with a single player. Bubbles of different color start continuously growing from the top of the game area. Player needs to hit bubbles that are adjacent to 2 or more bubbles of the same color.
 
