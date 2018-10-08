@@ -15,7 +15,7 @@ Here are the **MVPs**:
 * Have a production ReadMe file
 
 ### Wireframes
-[[images/main_view.png]]
+![](images/main_view.png)
 
 ### Timeline
 **Day1:**
