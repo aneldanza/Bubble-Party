@@ -33,7 +33,7 @@ class Game {
     this.createBubbles();
     this.fullRowCount = 1;
     this.score = 0;
-    this.highestScore = this.highestScore || 0;
+    this.highestScore = this.highestScore;
     this.cluster = [];
     this.newPlayer();
     this.over = false;
@@ -69,8 +69,6 @@ class Game {
             this.searchForCluster(this.bubbles[c][r]);
           }
      }
-    
-    
     return this.cluster;
   }
   
@@ -80,7 +78,6 @@ class Game {
       this.cluster[bubble].color = 'transparent';
     }
     if (this.cluster.length > 0) {
-
       this.score += this.cluster.length;
     }
     this.cluster = [];
@@ -133,8 +130,6 @@ class Game {
             }  
           } 
           
-          
-          
           if (this.cluster.length > 0) {
             let start_column = this.cluster[0].c
             let start_row = this.cluster[0].r + 1;
@@ -147,16 +142,12 @@ class Game {
                 }
               }
             }
-          
-          
           this.dropCluster();
           this.floating = true;  
-
           } 
         } 
       }
     }
-  
   }
 
   addRow() {
@@ -173,21 +164,20 @@ class Game {
     this.fullRowCount++;
   }
 
-  gameOver() {
-    
+
+  gameOver() {   
     let score = document.getElementById('current-score');
     let currentScore = this.score;
     score.innerHTML = currentScore;
     var d = document.getElementById("message");
     d.className = "game-over";
     d.style.display = 'grid'; 
-    // let highestScore = document.getElementById('highest-score');
-    // if (this.score > this.highestScore) {
-    //   this.highestScore = this.score;
-    // }
-    // highestScore.innerHTML = this.highestScore;
+    let highestScore = document.getElementById('highest-score');
+    if (this.score > this.highestScore) {
+      this.highestScore = this.score;
+    }
+    highestScore.innerHTML = this.highestScore;
     this.over = true;
-    this.score = 0;
   }
 
   createBubbles() {
@@ -241,7 +231,6 @@ class Game {
     }
     
     handleBottomCollision(bubble) {
-      
       this.bottomCollision = false;
       if (this.x < bubble.x) {
         
@@ -264,21 +253,28 @@ class Game {
     }
     
     handleLeftSideCollision(bubble) {
-      
-      
       this.leftSideCollision = false;
-      return [bubble.c - 1, bubble.r];
+      if (bubble.c === 0) {
+        this.handleBottomCollision.call(this, bubble)
+      } else {
+        return [bubble.c - 1, bubble.r];
+      }
     }
     
     handleRightSideCollision(bubble) {
-      
-      
       this.rightSideCollision = false;
       if (bubble.c === this.columns - 1) {
-        this.handleBottomCollision.call(this.bubble);
+        this.handleBottomCollision.call(this, bubble);
       } else {
       return [bubble.c + 1, bubble.r];
     }
+  }
+  isTopBorderCollision() {
+    if (this.y > 0 && this.y <= 20) {
+      this.topBorderCollision = true;
+      return true;
+    }
+    return false;
   }
 
   handleTopBorderCollision() {
@@ -290,6 +286,7 @@ class Game {
           }
     }
   }
+
   
   detectCollision() {
     for (let c = 0; c < this.columns; c++) {
