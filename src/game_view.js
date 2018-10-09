@@ -19,22 +19,25 @@ class GameView {
     const pause = document.getElementById('pause');
     pause.addEventListener('mousedown', this.handlePause.bind(this));
 
-    this.backgroundSound = new Sound('./sounds/background.mp3');
-
+    this.backgroundSound = new Audio('./sounds/background.mp3');
+    this.backgroundSound.loop = true;
     const mute = document.getElementById('mute');
     mute.addEventListener('mousedown', this.handleMute.bind(this));
-    this.mute = true;
+    this.playSound = false;
   }
 
   handleMute() {
-    if (this.mute) {
-      this.mute = false;
-      debugger
-      this.backgroundSound.play();
+    if (this.playSound) {
+      this.playSound = false;
+      this.backgroundSound.pause();
     } else {
-      debugger
-      this.mute = true;
-      this.backgroundSound.stop();
+      this.playSound = true;
+      if (this.backgroundSound.play() !== undefined) {
+        this.backgroundSound.play().then( function() {
+        }).catch(function(error) {
+          console.log(error);
+        })
+      };
     }
   }
   
