@@ -45,12 +45,12 @@ class Game {
     const stop = document.getElementById('quit');
     stop.addEventListener('mousedown', this.gameOver.bind(this));
     this.pop = new Audio('./sounds/bubble_burst.mp3');
-    console.log(new Audio('./sounds/uh-oh.mp3'));
     this.uh_oh = new Audio('./sounds/uh-oh.mp3');
     this.wow = new Audio('./sounds/wow.mp3');
     this.game_over = new Audio('./sounds/game_over.mp3');
     this.backgroundSound = new Audio('./sounds/Honolulu-March.mp3');
     this.backgroundSound.loop = true;
+    this.backgroundSound.volume = 0.5;
     this.playSound = false;
     this.hit = new Audio('./sounds/hit.mp3');
   }
