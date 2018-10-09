@@ -1,4 +1,5 @@
 const Bubble = require('./bubble');
+const GameView = require('./game_view');
 
 const CLUSTER_POSITIONS = [
   [0, -1],
@@ -43,6 +44,15 @@ class Game {
     this.topBorderCollision = false;
     const stop = document.getElementById('quit');
     stop.addEventListener('mousedown', this.gameOver.bind(this));
+    this.pop = new Audio('./sounds/bubble_burst.mp3');
+    console.log(new Audio('./sounds/uh-oh.mp3'));
+    this.uh_oh = new Audio('./sounds/uh-oh.mp3');
+    this.wow = new Audio('./sounds/wow.mp3');
+    this.game_over = new Audio('./sounds/game_over.mp3');
+    this.backgroundSound = new Audio('./sounds/Honolulu-March.mp3');
+    this.backgroundSound.loop = true;
+    this.playSound = false;
+    this.hit = new Audio('./sounds/hit.mp3');
   }
 
   searchForCluster(bubble) {
@@ -79,6 +89,13 @@ class Game {
     }
     if (this.cluster.length > 0) {
       this.score += this.cluster.length;
+      for ( let i = 0; i < this.score; i++) {
+        this.pop.play();
+        console.log('pop');
+      }
+      if (this.cluster.length > 4) {
+        this.wow.play();
+      }
     }
     this.cluster = [];
   }
@@ -166,6 +183,9 @@ class Game {
 
 
   gameOver() {   
+    this.backgroundSound.pause();
+    this.playSound = false;
+    setTimeout(() => this.game_over.play(), 1500);
     let score = document.getElementById('current-score');
     let currentScore = this.score;
     score.innerHTML = currentScore;
@@ -303,6 +323,7 @@ class Game {
           let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
   
           if (bubble.y >= 500) {
+            this.uh_oh.play();
             this.gameOver();
             return
           }
@@ -322,6 +343,7 @@ class Game {
           newBubble.c = coordinates[0];
           newBubble.r = coordinates[1];
           this.bubbles[newBubble.c][newBubble.r] = newBubble;
+          this.hit.play(); 
 
           let cluster = this.searchForCluster.call(this, newBubble);  
             if (cluster.length > 2) {  

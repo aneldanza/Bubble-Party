@@ -19,21 +19,20 @@ class GameView {
     const pause = document.getElementById('pause');
     pause.addEventListener('mousedown', this.handlePause.bind(this));
 
-    this.backgroundSound = new Audio('./sounds/background.mp3');
-    this.backgroundSound.loop = true;
+   
     const mute = document.getElementById('mute');
     mute.addEventListener('mousedown', this.handleMute.bind(this));
-    this.playSound = false;
+    
   }
 
   handleMute() {
-    if (this.playSound) {
-      this.playSound = false;
-      this.backgroundSound.pause();
+    if (this.game.playSound) {
+      this.game.playSound = false;
+      this.game.backgroundSound.pause();
     } else {
-      this.playSound = true;
-      if (this.backgroundSound.play() !== undefined) {
-        this.backgroundSound.play().then( function() {
+      this.game.playSound = true;
+      if (this.game.backgroundSound.play() !== undefined) {
+        this.game.backgroundSound.play().then( function() {
         }).catch(function(error) {
           console.log(error);
         })
@@ -44,10 +43,12 @@ class GameView {
   handlePause() {
     if (this.pause) {
       this.pause = false;
+      this.backgroundSound.play();
       document.addEventListener('mousemove', this.handleMouseMove, false);
       
     } else {
       this.pause = true;
+      this.backgroundSound.pause();
       document.removeEventListener('mousemove', this.handleMouseMove, false);
     }
   }
@@ -126,8 +127,8 @@ class GameView {
         this.ctx.closePath();
         
         if (bubbleY >=535 && this.game.bubbles[c][r].color !== 'transparent') {
+          this.game.uh_oh.play();
           this.game.gameOver();
-          console.log('reached end')
           return
         }
       }
