@@ -10,9 +10,7 @@ class Sound {
     
   }
 
-  play(){
-    this.sound.play();
-  }
+ 
   
   stop(){
     this.sound.pause();

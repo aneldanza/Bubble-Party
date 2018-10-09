@@ -91,7 +91,7 @@ class Game {
       this.score += this.cluster.length;
       for ( let i = 0; i < this.score; i++) {
         this.pop.play();
-        console.log('pop');
+        
       }
       if (this.cluster.length > 4) {
         this.wow.play();

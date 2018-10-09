@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize Firebase
   var config = {
     apiKey: "AIzaSyAEWvBjnicABetSjMV73WYidvq0M9xqssE",
-    authDomain: "bubble-party.firebaseapp.com",
+    // authDomain: "bubble-party.firebaseapp.com",
     databaseURL: "https://bubble-party.firebaseio.com",
     projectId: "bubble-party",
-    storageBucket: "bubble-party.appspot.com",
+    // storageBucket: "bubble-party.appspot.com",
     messagingSenderId: "448048905735"
   };
   firebase.initializeApp(config);

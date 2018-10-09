@@ -34,7 +34,7 @@ class GameView {
       if (this.game.backgroundSound.play() !== undefined) {
         this.game.backgroundSound.play().then( function() {
         }).catch(function(error) {
-          console.log(error);
+          
         })
       };
     }
@@ -48,7 +48,7 @@ class GameView {
       
     } else {
       this.pause = true;
-      this.backgroundSound.pause();
+      this.game.backgroundSound.pause();
       document.removeEventListener('mousemove', this.handleMouseMove, false);
     }
   }
