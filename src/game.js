@@ -299,6 +299,7 @@ class Game {
 
   handleTopBorderCollision() {
     this.topBorderCollision = false;
+    debugger
     for(let c = 0; c < this.columns; c++) {
       if (this.x < this.bubbles[c][0].x + 20 &&
           this.x > this.bubbles[c][0].x - 20) {
