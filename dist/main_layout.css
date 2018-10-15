@@ -110,8 +110,9 @@ html {
 
 
 #myCanvas {
-  /* background-color: transparent; */
-  border: 3px solid red;
+  background-color: rgba(2, 184, 232, 0.4);
+  /* border: 3px solid rgb(255, 251, 175); */
+  border-radius: 5px;
 }
 
 .bottom-nav {
