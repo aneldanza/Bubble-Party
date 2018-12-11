@@ -99,6 +99,14 @@ class GameView {
     this.ctx.closePath;
   }
 
+  drawNextPlayer() {
+    this.ctx.beginPath();
+    this.ctx.arc(this.game.x - 100, this.game.y, this.radius, 0, Math.PI*2);
+    this.ctx.fillStyle = this.game.player.color;
+    this.ctx.fill();
+    this.ctx.closePath; 
+  }
+
   drawBubbles() {
     let bubblePadding = 3;
     let leftOffset = 3;
@@ -138,6 +146,7 @@ class GameView {
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.drawPlayer();
+    this.drawNextPlayer();
     this.drawBubbles();
     // this.backgroundSound.play();
     this.game.detectCollision();
