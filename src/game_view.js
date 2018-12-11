@@ -101,8 +101,8 @@ class GameView {
 
   drawNextPlayer() {
     this.ctx.beginPath();
-    this.ctx.arc(this.game.x - 100, this.game.y, this.radius, 0, Math.PI*2);
-    this.ctx.fillStyle = this.game.player.color;
+    this.ctx.arc(this.game.nextNewPlayer.x, this.game.nextNewPlayer.y, this.radius, 0, Math.PI*2);
+    this.ctx.fillStyle = this.game.nextNewPlayer.color;
     this.ctx.fill();
     this.ctx.closePath; 
   }

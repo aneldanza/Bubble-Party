@@ -36,6 +36,7 @@ class Game {
     this.score = 0;
     this.highestScore = this.highestScore;
     this.cluster = [];
+    this.nextPlayer();
     this.newPlayer();
     this.over = false;
     this.bottomCollision = false;
@@ -356,18 +357,31 @@ class Game {
               }
             }
             this.cluster = [];
+            this.nextPlayer();
             this.newPlayer();
         }
       }
     }
   }
 
+  nextPlayer() {
+    if (!(this.color)) {
+      this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+    } else {
+      this.color = this.nextColor;
+    }
+    
+    this.nextColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+    this.nextNewPlayer = new Bubble(this.canvas.width / 5, 570, this.nextColor);
+  }
+
   newPlayer() {
     this.x = this.canvas.width/2;
     this.y = 570;
-    let color = this.colors[Math.floor(Math.random() * this.colors.length)];
+    let color = this.color;
     this.player = new Bubble(this.x, this.y, color);
   } 
+
 }
 
 module.exports = Game;
