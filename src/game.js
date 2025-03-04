@@ -1,24 +1,23 @@
-const Bubble = require('./bubble');
-const GameView = require('./game_view');
+const Bubble = require("./bubble");
+const GameView = require("./game_view");
 
 const CLUSTER_POSITIONS = [
   [0, -1],
   [0, 1],
-  [-1, 0], 
-  [1, 0], 
-  [-1, -1], 
-  [-1, 1]
+  [-1, 0],
+  [1, 0],
+  [-1, -1],
+  [-1, 1],
 ];
 
 const OFFSET_CLUSTER_POSITIONS = [
   [0, -1],
   [0, 1],
-  [-1, 0], 
-  [1, 0], 
-  [1, -1], 
-  [1, 1]
+  [-1, 0],
+  [1, 0],
+  [1, -1],
+  [1, 1],
 ];
-
 
 class Game {
   constructor(colors, canvas) {
@@ -43,56 +42,57 @@ class Game {
     this.leftSideCollision = false;
     this.rightSideCollision = false;
     this.topBorderCollision = false;
-    const stop = document.getElementById('quit');
-    stop.addEventListener('mousedown', this.gameOver.bind(this));
-    this.pop = new Audio('./sounds/bubble_burst.mp3');
-    this.uh_oh = new Audio('./sounds/uh-oh.mp3');
-    this.wow = new Audio('./sounds/wow.mp3');
-    this.game_over = new Audio('./sounds/game_over.mp3');
-    this.backgroundSound = new Audio('./sounds/Honolulu-March.mp3');
+    const stop = document.getElementById("quit");
+    stop.addEventListener("mousedown", this.gameOver.bind(this));
+    this.pop = new Audio("./sounds/bubble_burst.mp3");
+    this.uh_oh = new Audio("./sounds/uh-oh.mp3");
+    this.wow = new Audio("./sounds/wow.mp3");
+    this.game_over = new Audio("./sounds/game_over.mp3");
+    this.backgroundSound = new Audio("./sounds/Honolulu-March.mp3");
     this.backgroundSound.loop = true;
     this.backgroundSound.volume = 0.5;
     this.playSound = false;
-    this.hit = new Audio('./sounds/hit.mp3');
+    this.hit = new Audio("./sounds/hit.mp3");
   }
 
   searchForCluster(bubble) {
     if (!this.cluster.includes(bubble)) {
       this.cluster.push(bubble);
     }
-    
-     for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
-       let c, r;
-       if (this.bubbles[0][bubble.r].x === 23) {
+
+    for (let i = 0; i < CLUSTER_POSITIONS.length; i++) {
+      let c, r;
+      if (this.bubbles[0][bubble.r].x === 23) {
         c = CLUSTER_POSITIONS[i][0] + bubble.c;
         r = CLUSTER_POSITIONS[i][1] + bubble.r;
-       } else {
+      } else {
         c = OFFSET_CLUSTER_POSITIONS[i][0] + bubble.c;
         r = OFFSET_CLUSTER_POSITIONS[i][1] + bubble.r;
-       }
-       
-       if (c > this.columns || c < 0 || r > this.rows || r < 0) {
-         continue;
-        } else if (this.bubbles[c] &&
-          this.bubbles[c][r] &&
-          this.bubbles[c][r].color === bubble.color && !this.cluster.includes(this.bubbles[c][r])) {
-            
-            this.searchForCluster(this.bubbles[c][r]);
-          }
-     }
+      }
+
+      if (c > this.columns || c < 0 || r > this.rows || r < 0) {
+        continue;
+      } else if (
+        this.bubbles[c] &&
+        this.bubbles[c][r] &&
+        this.bubbles[c][r].color === bubble.color &&
+        !this.cluster.includes(this.bubbles[c][r])
+      ) {
+        this.searchForCluster(this.bubbles[c][r]);
+      }
+    }
     return this.cluster;
   }
-  
+
   dropCluster() {
     for (let bubble = 0; bubble < this.cluster.length; bubble++) {
-      this.cluster[bubble].status = 'placeholder';
-      this.cluster[bubble].color = 'transparent';
+      this.cluster[bubble].status = "placeholder";
+      this.cluster[bubble].color = "transparent";
     }
     if (this.cluster.length > 0) {
       this.score += this.cluster.length;
-      for ( let i = 0; i < this.score; i++) {
+      for (let i = 0; i < this.score; i++) {
         this.pop.play();
-        
       }
       if (this.cluster.length > 4) {
         this.wow.play();
@@ -101,27 +101,29 @@ class Game {
     this.cluster = [];
   }
 
-  isDisattached({c, r}) { 
+  isDisattached({ c, r }) {
     if (r === 0) {
       return false;
     }
-    if (this.bubbles[c][r - 1].status === 'placeholder') {
+    if (this.bubbles[c][r - 1].status === "placeholder") {
       if (this.bubbles[0][r].x === 23) {
-       
-        if (c > 0 &&
-          this.bubbles[c - 1][r - 1].status === 'placeholder') {
+        if (c > 0 && this.bubbles[c - 1][r - 1].status === "placeholder") {
           return true;
         } else if (c === 0) {
           return true;
         }
       } else {
-        if (c < this.columns - 1 &&
-          this.bubbles[c + 1][r - 1].status === 'placeholder') {
+        if (
+          c < this.columns - 1 &&
+          this.bubbles[c + 1][r - 1].status === "placeholder"
+        ) {
           return true;
-        } else if(c === this.columns - 1 &&
-          this.bubbles[c - 1][r].status === 'placeholder') {
+        } else if (
+          c === this.columns - 1 &&
+          this.bubbles[c - 1][r].status === "placeholder"
+        ) {
           return true;
-        } 
+        }
       }
     }
     return false;
@@ -130,70 +132,83 @@ class Game {
   detectFloatingBubbles() {
     this.floating = false;
     for (let c = 0; c < this.columns; c++) {
-      for (let r = 1; r < this.rows; r++ ){ 
-      
-        if ((this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) && c === 0 && r > 0) ||(this.bubbles[c][r].status === 'visible' && this.isDisattached(this.bubbles[c][r]) 
-        && this.bubbles[c - 1][r].status === 'placeholder'))
-        {      
+      for (let r = 1; r < this.rows; r++) {
+        if (
+          (this.bubbles[c][r].status === "visible" &&
+            this.isDisattached(this.bubbles[c][r]) &&
+            c === 0 &&
+            r > 0) ||
+          (this.bubbles[c][r].status === "visible" &&
+            this.isDisattached(this.bubbles[c][r]) &&
+            this.bubbles[c - 1][r].status === "placeholder")
+        ) {
           this.cluster.push(this.bubbles[c][r]);
           for (let i = c + 1; i < this.columns; i++) {
-
-            if (this.bubbles[i][r].status === 'visible' && this.isDisattached.call(this, this.bubbles[i][r])) {
-              this.cluster.push(this.bubbles[i][r])
-            } else if (this.bubbles[i][r] === 'undefined' || this.bubbles[i][r].status === 'placeholder') {
+            if (
+              this.bubbles[i][r].status === "visible" &&
+              this.isDisattached.call(this, this.bubbles[i][r])
+            ) {
+              this.cluster.push(this.bubbles[i][r]);
+            } else if (
+              this.bubbles[i][r] === "undefined" ||
+              this.bubbles[i][r].status === "placeholder"
+            ) {
               break;
             } else {
               this.cluster = [];
               break;
-            }  
-          } 
-          
+            }
+          }
+
           if (this.cluster.length > 0) {
-            let start_column = this.cluster[0].c
+            let start_column = this.cluster[0].c;
             let start_row = this.cluster[0].r + 1;
-            
-            for (let k = start_column; k <= this.cluster[this.cluster.length - 1].c; k++) {
-              for (let j =  start_row; j < this.rows; j++) {
-                if (this.bubbles[k][j].status === 'visible') {
+
+            for (
+              let k = start_column;
+              k <= this.cluster[this.cluster.length - 1].c;
+              k++
+            ) {
+              for (let j = start_row; j < this.rows; j++) {
+                if (this.bubbles[k][j].status === "visible") {
                   this.cluster.push(this.bubbles[k][j]);
-                  this.cluster
+                  this.cluster;
                 }
               }
             }
-          this.dropCluster();
-          this.floating = true;  
-          } 
-        } 
+            this.dropCluster();
+            this.floating = true;
+          }
+        }
       }
     }
   }
 
   addRow() {
     for (let c = 0; c < this.columns; c++) {
-      for (let r = this.rows - 1; r >= 1;  r--) {
-       this.bubbles[c][r] = this.bubbles[c][r - 1];
+      for (let r = this.rows - 1; r >= 1; r--) {
+        this.bubbles[c][r] = this.bubbles[c][r - 1];
       }
     }
 
     for (let c = 0; c < this.columns; c++) {
       let color = this.colors[Math.floor(Math.random() * this.colors.length)];
-      this.bubbles[c][0] = new Bubble(0, 0, color, 0, 0, 'visible');
+      this.bubbles[c][0] = new Bubble(0, 0, color, 0, 0, "visible");
     }
     this.fullRowCount++;
   }
 
-
-  gameOver() {   
+  gameOver() {
     this.backgroundSound.pause();
     this.playSound = false;
     setTimeout(() => this.game_over.play(), 1500);
-    let score = document.getElementById('current-score');
+    let score = document.getElementById("current-score");
     let currentScore = this.score;
     score.innerHTML = currentScore;
     var d = document.getElementById("message");
     d.className = "game-over";
-    d.style.display = 'grid'; 
-    let highestScore = document.getElementById('highest-score');
+    d.style.display = "grid";
+    let highestScore = document.getElementById("highest-score");
     if (this.score > this.highestScore) {
       this.highestScore = this.score;
     }
@@ -205,7 +220,14 @@ class Game {
     for (let c = 0; c < this.columns; c++) {
       this.bubbles[c] = [];
       for (let r = 0; r < this.rows; r++) {
-        this.bubbles[c][r] = new Bubble(0,0,'transparent', 0,0, 'placeholder');
+        this.bubbles[c][r] = new Bubble(
+          0,
+          0,
+          "transparent",
+          0,
+          0,
+          "placeholder"
+        );
       }
     }
     this.addRow();
@@ -213,80 +235,81 @@ class Game {
 
   isBottomCollision(bubble) {
     if (
-      bubble.status === 'visible'
-      && this.x > bubble.x - bubble.radius - 1
-      && this.x < bubble.x + bubble.radius + 1
-      && this.y > bubble.y 
-      && this.y <= bubble.y + 2 * bubble.radius + 2) {
-        this.bottomCollision = true;
-        return true;
-      } 
-      return false;
-  }
-  
-  isRightSideCollision(bubble) {
-    if (
-      bubble.status === 'visible'
-      && this.y > bubble.y - bubble.radius
-      && this.y < bubble.y + bubble.radius
-      && this.x > bubble.x 
-      && this.x <= bubble.x + 2 * bubble.radius - 5) {
-        this.rightSideCollision = true; 
-        return true;
+      bubble.status === "visible" &&
+      this.x > bubble.x - bubble.radius - 1 &&
+      this.x < bubble.x + bubble.radius + 1 &&
+      this.y > bubble.y &&
+      this.y <= bubble.y + 2 * bubble.radius + 2
+    ) {
+      this.bottomCollision = true;
+      return true;
     }
     return false;
   }
-  
+
+  isRightSideCollision(bubble) {
+    if (
+      bubble.status === "visible" &&
+      this.y > bubble.y - bubble.radius &&
+      this.y < bubble.y + bubble.radius &&
+      this.x > bubble.x &&
+      this.x <= bubble.x + 2 * bubble.radius - 5
+    ) {
+      this.rightSideCollision = true;
+      return true;
+    }
+    return false;
+  }
+
   isLeftSideCollision(bubble) {
     if (
-      bubble.status === 'visible'
-      && this.y > bubble.y - bubble.radius
-      && this.y < bubble.y + bubble.radius
-      && this.x < bubble.x 
-      && this.x >= bubble.x - 2 * bubble.radius + 5
-      ) {
-        this.leftSideCollision = true;
-        return true;
-      }
-      return false;
+      bubble.status === "visible" &&
+      this.y > bubble.y - bubble.radius &&
+      this.y < bubble.y + bubble.radius &&
+      this.x < bubble.x &&
+      this.x >= bubble.x - 2 * bubble.radius + 5
+    ) {
+      this.leftSideCollision = true;
+      return true;
     }
-    
-    handleBottomCollision(bubble) {
-      this.bottomCollision = false;
-      if (this.x < bubble.x) {
-        
-        if (this.bubbles[0][bubble.r].x === 23 && bubble.c > 0) {
-          return [bubble.c - 1, bubble.r + 1];
-        } else {
-          return [bubble.c, bubble.r + 1]
-        }
+    return false;
+  }
+
+  handleBottomCollision(bubble) {
+    this.bottomCollision = false;
+    if (this.x < bubble.x) {
+      if (this.bubbles[0][bubble.r].x === 23 && bubble.c > 0) {
+        return [bubble.c - 1, bubble.r + 1];
       } else {
-        if (this.bubbles[0][bubble.r].x === 23) {
+        return [bubble.c, bubble.r + 1];
+      }
+    } else {
+      if (this.bubbles[0][bubble.r].x === 23) {
+        return [bubble.c, bubble.r + 1];
+      } else {
+        if (bubble.c === this.columns - 1) {
           return [bubble.c, bubble.r + 1];
         } else {
-          if (bubble.c === this.columns - 1) {
-            return [bubble.c, bubble.r + 1]
-          } else {
-            return [bubble.c + 1, bubble.r + 1]
-          }
+          return [bubble.c + 1, bubble.r + 1];
         }
       }
     }
-    
-    handleLeftSideCollision(bubble) {
-      this.leftSideCollision = false;
-      if (bubble.c === 0) {
-        this.handleBottomCollision.call(this, bubble)
-      } else {
-        return [bubble.c - 1, bubble.r];
-      }
+  }
+
+  handleLeftSideCollision(bubble) {
+    this.leftSideCollision = false;
+    if (bubble.c === 0) {
+      this.handleBottomCollision.call(this, bubble);
+    } else {
+      return [bubble.c - 1, bubble.r];
     }
-    
-    handleRightSideCollision(bubble) {
-      this.rightSideCollision = false;
-      if (bubble.c === this.columns - 1) {
-        this.handleBottomCollision.call(this, bubble);
-      } else {
+  }
+
+  handleRightSideCollision(bubble) {
+    this.rightSideCollision = false;
+    if (bubble.c === this.columns - 1) {
+      this.handleBottomCollision.call(this, bubble);
+    } else {
       return [bubble.c + 1, bubble.r];
     }
   }
@@ -300,36 +323,45 @@ class Game {
 
   handleTopBorderCollision() {
     this.topBorderCollision = false;
-    debugger
-    for(let c = 0; c < this.columns; c++) {
-      if (this.x < this.bubbles[c][0].x + 20 &&
-          this.x > this.bubbles[c][0].x - 20) {
-            return [c, 0];
-          }
+
+    for (let c = 0; c < this.columns; c++) {
+      if (
+        this.x < this.bubbles[c][0].x + 20 &&
+        this.x > this.bubbles[c][0].x - 20
+      ) {
+        return [c, 0];
+      }
     }
   }
 
-  
   detectCollision() {
     for (let c = 0; c < this.columns; c++) {
       for (let r = 0; r < this.bubbles[c].length; r++) {
         let bubble = this.bubbles[c][r];
-        
-        if (this.topBorderCollision ||
-            this.isBottomCollision.call(this, bubble) ||
-            this.isLeftSideCollision.call(this, bubble) ||
-            this.isRightSideCollision.call(this, bubble)) 
-          {
+
+        if (
+          this.topBorderCollision ||
+          this.isBottomCollision.call(this, bubble) ||
+          this.isLeftSideCollision.call(this, bubble) ||
+          this.isRightSideCollision.call(this, bubble)
+        ) {
           this.dx = 0;
           this.dy = 0;
-          let newBubble = new Bubble(this.x, this.y, this.player.color, 0, 0, 'visible');
-  
+          let newBubble = new Bubble(
+            this.x,
+            this.y,
+            this.player.color,
+            0,
+            0,
+            "visible"
+          );
+
           if (bubble.y >= 500) {
             this.uh_oh.play();
             this.gameOver();
-            return
+            return;
           }
-       
+
           let coordinates = [];
           if (this.topBorderCollision) {
             coordinates = this.handleTopBorderCollision.call(this);
@@ -340,48 +372,48 @@ class Game {
             coordinates = this.handleLeftSideCollision.call(this, bubble);
           } else if (this.rightSideCollision) {
             coordinates = this.handleRightSideCollision.call(this, bubble);
-          } 
+          }
 
           newBubble.c = coordinates[0];
           newBubble.r = coordinates[1];
           this.bubbles[newBubble.c][newBubble.r] = newBubble;
-          this.hit.play(); 
+          this.hit.play();
 
-          let cluster = this.searchForCluster.call(this, newBubble);  
-            if (cluster.length > 2) {  
-              this.dropCluster();
-              this.floating = true;
-    
-              while (this.floating) {
-                this.detectFloatingBubbles();
-              }
+          let cluster = this.searchForCluster.call(this, newBubble);
+          if (cluster.length > 2) {
+            this.dropCluster();
+            this.floating = true;
+
+            while (this.floating) {
+              this.detectFloatingBubbles();
             }
-            this.cluster = [];
-            this.nextPlayer();
-            this.newPlayer();
+          }
+          this.cluster = [];
+          this.nextPlayer();
+          this.newPlayer();
         }
       }
     }
   }
 
   nextPlayer() {
-    if (!(this.color)) {
+    if (!this.color) {
       this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
     } else {
       this.color = this.nextColor;
     }
-    
-    this.nextColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+
+    this.nextColor =
+      this.colors[Math.floor(Math.random() * this.colors.length)];
     this.nextNewPlayer = new Bubble(this.canvas.width / 5, 570, this.nextColor);
   }
 
   newPlayer() {
-    this.x = this.canvas.width/2;
+    this.x = this.canvas.width / 2;
     this.y = 570;
     let color = this.color;
     this.player = new Bubble(this.x, this.y, color);
-  } 
-
+  }
 }
 
 module.exports = Game;
