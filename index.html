@@ -1,50 +1,72 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="dist/reset.css" type="text/css">
-    <link rel="stylesheet" href="dist/main_layout.css" type="text/css">
+    <link rel="stylesheet" href="dist/reset.css" type="text/css" />
+    <link rel="stylesheet" href="dist/main_layout.css" type="text/css" />
     <link rel="icon" type="image/png" href="./images/background.png" />
-    <link href="https://fonts.googleapis.com/css?family=Freckle+Face|Montserrat|Press+Start+2P" rel="stylesheet">
-   
+    <link
+      href="https://fonts.googleapis.com/css?family=Freckle+Face|Montserrat|Press+Start+2P"
+      rel="stylesheet"
+    />
+
     <title>Bubble Party</title>
     <style>
-    	* { padding: 0; margin: 0; }
-    	canvas { background: #eee; display: block; margin: 0 auto; }
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      canvas {
+        background: #eee;
+        display: block;
+        margin: 0 auto;
+      }
     </style>
   </head>
-  <body class='main-container'>
-    <nav class='main-nav'>
-      <h1 class='title'>Bubble Party</h1>
-      <nav class='top-nav'>
-        <div id='score' class='game-button'></div>
-        <button class='professional'><a href="https://github.com/anel-guerrero/Bubble-Party" target="_blank">GitHub</a></button>
-        <button class='professional'><a href="https://www.linkedin.com/in/anel-danza-a9591868/" target="_blank">LinkedIn</a></button>
-        <button class='professional'><a href="https://aneldanza.info" target="_blank">Personal Website</a></button>
+  <body class="main-container">
+    <nav class="main-nav">
+      <h1 class="title">Bubble Party</h1>
+      <nav class="top-nav">
+        <div id="score" class="game-button"></div>
+        <button class="professional">
+          <a
+            href="https://github.com/anel-guerrero/Bubble-Party"
+            target="_blank"
+            >GitHub</a
+          >
+        </button>
+        <button class="professional">
+          <a
+            href="https://www.linkedin.com/in/anel-danza-a9591868/"
+            target="_blank"
+            >LinkedIn</a
+          >
+        </button>
+        <button class="professional">
+          <a
+            href="https://personal-portfolio-aneldanzas-projects.vercel.app/"
+            target="_blank"
+            >Personal Website</a
+          >
+        </button>
       </nav>
     </nav>
-    <div id='parent-container'>
-      <div id='message' >
-        <span class='game-over-message'>GAME OVER</span>
-        <div class='score'>
-          <span>Highest Score</span>
-          <span id='highest-score'></span>
-        </div>
-        <div class='score'>
+    <div id="parent-container">
+      <div id="message">
+        <span class="game-over-message">GAME OVER</span>
+        <div class="score">
           <span>Your Score</span>
-          <span id='current-score'></span>
+          <span id="current-score"></span>
         </div>
-        <span id='play-again'>Play Again</span>
+        <span id="play-again">Play Again</span>
       </div>
       <canvas id="myCanvas" width="625" height="600"></canvas>
     </div>
-    <nav class='bottom-nav'>
-      <button class='game-button' id='pause'>Pause</button>
-      <button class='game-button' id='quit'>Quit</button>
-      <button class='game-button' id='mute'>Play Sound / Mute</button>
+    <nav class="bottom-nav">
+      <button class="game-button" id="pause">Pause</button>
+      <button class="game-button" id="quit">Quit</button>
+      <button class="game-button" id="mute">Play Sound / Mute</button>
     </nav>
-    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase-database.js"></script>
     <script src="dist/main.js"></script>
   </body>
-  </html>
+</html>
