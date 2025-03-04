@@ -208,11 +208,6 @@ class Game {
     var d = document.getElementById("message");
     d.className = "game-over";
     d.style.display = "grid";
-    let highestScore = document.getElementById("highest-score");
-    if (this.score > this.highestScore) {
-      this.highestScore = this.score;
-    }
-    highestScore.innerHTML = this.highestScore;
     this.over = true;
   }
 
